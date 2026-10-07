@@ -2,8 +2,7 @@
 
 API REST para procesamiento y analisis de respuestas al impulso segun la norma ISO 3382.
 
-<!-- Badge de CI: reemplazar <usuario>/<repo> por los datos del repositorio del grupo -->
-![CI](https://github.com/<usuario>/<repo>/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/leonardofvalle/rir-api/actions/workflows/ci.yml/badge.svg)
 ![Python](https://img.shields.io/badge/python-3.12+-blue.svg)
 
 ## Descripcion
@@ -24,7 +23,9 @@ ISO 3382-1.
 
 | Nombre | Legajo | Rol |
 |--------|--------|-----|
-| ...    | ...    | ... |
+| Leonardo Valle | 76106 | Integración, API, adquisición de audio y cálculo de parámetros |
+| Matías Archelli | 70479 | Ruido rosa, filtrado y curva de decaimiento; registro de IA |
+| Marcelo Flores | 50004 | Sine sweep, respuesta al impulso y validación |
 
 ## Requisitos previos
 
@@ -32,35 +33,11 @@ ISO 3382-1.
 - [uv](https://docs.astral.sh/uv/) (gestor de paquetes y entornos virtuales)
 - git y una cuenta de GitHub
 
-## Arranque: crear el repositorio del grupo
+## Arranque: 
+Clonar el repositorio e instalar (ver "Instalacion y ejecucion"):
 
-Cada grupo trabaja en **un repositorio nuevo propio** y copia adentro el contenido de este
-template (no es un fork).
-
-1. Una persona del grupo crea en GitHub un repositorio **vacio** (por ejemplo `rir-api`,
-   sin README ni .gitignore) y agrega al resto del grupo y a los docentes
-   (**@maxiyommi** y **@jero-scafati**) como colaboradores
-   (*Settings → Collaborators → Add people*).
-2. Copiar el template y hacer el primer commit:
-
-```bash
-# Bajar el repositorio de la materia (solo la ultima version)
-git clone --depth 1 https://github.com/maxiyommi/signal-systems.git
-
-# Clonar el repositorio (vacio) del grupo
-git clone https://github.com/<usuario>/rir-api.git
-
-# Copiar el contenido del template (incluye archivos ocultos: .github/, .gitignore)
-cp -r signal-systems/trabajo_practico/template_repo/. rir-api/
-
-cd rir-api
-git add .
-git commit -m "chore: estructura inicial desde el template de la catedra"
-git branch -M main
-git push -u origin main
-```
-
-3. El resto del grupo clona `rir-api` y listo. La carpeta `signal-systems/` se puede borrar.
+    git clone https://github.com/leonardofvalle/rir-api.git
+    cd rir-api
 
 ## Instalacion y ejecucion
 
@@ -127,6 +104,68 @@ Cada milestone expone lo que construye: los routers y schemas de `signals` se ag
 (y suman `synthetic-ir` en M2), los de `filters` en M2 y los de `acoustics` y `utils` en M3
 (ver los `TODO` en `app/main.py`).
 
+## Arquitectura
+
+La API se organiza en tres capas: los **routers** reciben los pedidos HTTP, los
+**schemas** (Pydantic) validan los datos de entrada y salida, y los **services**
+hacen el procesamiento de señales.
+
+```mermaid
+flowchart TB
+    Cliente["Cliente<br/>(Swagger UI /docs, scripts)"]
+
+    subgraph API["app/main.py · FastAPI"]
+        direction TB
+        subgraph R["routers/"]
+            Rh["health.py<br/>GET /health (M0)"]
+            Rs["signals<br/>POST /signals/pink-noise · /signals/sine-sweep (M1)<br/>POST /signals/synthetic-ir (M2)"]
+            Rf["filters<br/>POST /filters/single-band (M2)"]
+            Ra["acoustics<br/>POST /acoustics/parameters (M3)"]
+            Ru["utils<br/>POST /utils/schroeder · /utils/smoothing (M3)"]
+            Rio["audio_http.py<br/>wav_response · uploaded_file"]
+        end
+
+        S["schemas/ (Pydantic)<br/>validacion de requests y responses"]
+
+        subgraph SV["services/"]
+            pn["pink_noise.py<br/>generate_pink_noise (M1)"]
+            ss["sine_sweep.py<br/>generate_sine_sweep_pair (M1)"]
+            io["audio_io.py<br/>play_and_record (M1)"]
+            su["signal_utils.py<br/>load_audio · generate_synthetic_ir<br/>get_impulse_response · logarithmic_scale_conversion (M2)"]
+            fi["filter.py<br/>filter_single_band (M2)"]
+            ap["acoustic_parameters.py<br/>apply_smoothing · apply_schroeder_integral<br/>linear_regression · calculate_parameters_from_ir (M3)"]
+        end
+    end
+
+    Cliente -->|"request HTTP"| R
+    R -->|"valida con"| S
+    R -->|"llama a"| SV
+    SV -->|"resultado (WAV o JSON)"| R
+    R -->|"response"| Cliente
+
+    ap -.->|"usa"| fi
+    ap -.->|"usa"| su
+```
+
+**Flujo de un pedido:** el cliente envía un request → el router lo recibe → Pydantic
+valida los parámetros (si son inválidos responde con error 422) → el router llama al
+service correspondiente → el resultado vuelve al cliente como WAV o JSON.
+
+## Branching strategy
+
+- **`main` protegida**: solo se modifica mediante pull request, con el CI
+  (`lint-and-test`: ruff + pytest) en verde. No se permite push directo ni force push.
+- **Ramas de trabajo**: una por tarea, creadas desde `main` actualizada:
+  `feature/descripcion` para funcionalidades, `fix/descripcion` para correcciones y
+  `docs/descripcion` para documentación (por ejemplo `feature/pink-noise`).
+- **Commits**: siguiendo [Conventional Commits](https://www.conventionalcommits.org/):
+  `feat:` funcionalidad nueva, `fix:` corrección, `docs:` documentación,
+  `test:` tests, `refactor:` reorganización sin cambiar comportamiento, `chore:` mantenimiento.
+- **Pull requests**: cada PR referencia su issue (por ejemplo "Closes #3") y lo revisa
+  otro integrante antes del merge.
+- **Entregas**: cada milestone se marca con un tag anotado en `main`
+  (`v0.1.0`, `v0.2.0`, `v1.0.0`).
+
 ## Milestones y entregas (2C 2026)
 
 | Milestone | Entrega | Tag | Evaluacion |
@@ -145,11 +184,11 @@ Cada milestone expone lo que construye: los routers y schemas de `signals` se ag
 
 ### M0 · El plano
 
-- [ ] Repositorio del grupo creado a partir del template, con los docentes como colaboradores.
-- [ ] `uv sync`, `uv run uvicorn app.main:app --reload` y `uv run pytest` funcionan.
-- [ ] README con integrantes y roles, instalacion, estructura y branching strategy.
-- [ ] Diagrama de arquitectura (Mermaid o draw.io) con todos los modulos de M1, M2 y M3.
-- [ ] Al menos 10 issues con labels (`milestone-1`, `milestone-2`, `milestone-3`) y asignados.
+- [X] Repositorio del grupo creado a partir del template, con los docentes como colaboradores.
+- [X] `uv sync`, `uv run uvicorn app.main:app --reload` y `uv run pytest` funcionan.
+- [X] README con integrantes y roles, instalacion, estructura y branching strategy.
+- [X] Diagrama de arquitectura (Mermaid o draw.io) con todos los modulos de M1, M2 y M3.
+- [X] Al menos 10 issues con labels (`milestone-1`, `milestone-2`, `milestone-3`) y asignados.
 
 ### M1 · Generacion de senales (`v0.1.0`)
 
