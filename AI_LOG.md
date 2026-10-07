@@ -82,3 +82,21 @@ routers → schemas → services y los módulos de M1 a M3.
 a qué función.
 
 **Verificación:** Revisé el diagrama renderizado en GitHub antes de hacer merge del PR.
+
+---
+
+## 2026-10-07 · Leonardo Valle · Claude (claude.ai)
+
+**Contexto:** M0, revisión del diagrama de arquitectura.
+
+**Qué pregunté:** Si la flecha "llama a" debía salir de los schemas, ya que solo se
+llama al service si la validación pasa; y si faltaba detalle en la caja de schemas.
+
+**Qué obtuve:** La explicación de que los schemas no ejecutan nada: FastAPI valida
+contra ellos y, si falla, responde 422 sin llegar al router. El que llama al service
+es el router. Además, una propuesta para detallar los schemas por archivo.
+
+**Qué aprendí:** El diagrama muestra quién usa a quién, no un paso a paso en el tiempo.
+
+**Decisión propia:** Detecté que la caja de schemas tenía menos detalle que el resto y
+pedí completarla; agregué también la etiqueta del error 422 y la dependencia del filtro inverso.
