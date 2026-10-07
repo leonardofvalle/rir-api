@@ -125,7 +125,12 @@ flowchart TB
             Rio["audio_http.py<br/>wav_response · uploaded_file"]
         end
 
-        S["schemas/ (Pydantic)<br/>validacion de requests y responses"]
+      subgraph S["schemas/ (Pydantic)"]
+            Ss["signals.py<br/>parametros de pink-noise y sine-sweep (M1)<br/>y de synthetic-ir (M2)"]
+            Sf["filters.py<br/>parametros de single-band (M2)"]
+            Sa["acoustics.py<br/>request y respuesta de parameters (M3)"]
+            Su["utils.py<br/>parametros de schroeder y smoothing (M3)"]
+        end    
 
         subgraph SV["services/"]
             pn["pink_noise.py<br/>generate_pink_noise (M1)"]
@@ -138,13 +143,14 @@ flowchart TB
     end
 
     Cliente -->|"request HTTP"| R
-    R -->|"valida con"| S
+    R -->|"valida con (si falla: Error 422)"| S
     R -->|"llama a"| SV
     SV -->|"resultado (WAV o JSON)"| R
     R -->|"response"| Cliente
 
     ap -.->|"usa"| fi
     ap -.->|"usa"| su
+    su -.->|"usa filtro inverso"| ss
 ```
 
 **Flujo de un pedido:** el cliente envía un request → el router lo recibe → Pydantic
