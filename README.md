@@ -112,7 +112,12 @@ hacen el procesamiento de señales.
 
 ```mermaid
 flowchart TB
-    Cliente["Cliente<br/>(Swagger UI /docs, scripts)"]
+    subgraph Entrada ["Entradas"]
+            AudioWAV["Archivo de Audio (.wav)<br />Grabación / Sine Sweep / IR"]
+            Params["Parámetros de Entrada<br />(frecuencias, tiempos, bandas)"]
+        end
+
+      Cliente["Cliente<br/>(Swagger UI /docs, scripts)"]
 
     subgraph API["app/main.py · FastAPI"]
         direction TB
