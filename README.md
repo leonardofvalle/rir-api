@@ -117,7 +117,12 @@ flowchart TB
             Params["Parámetros de Entrada<br />(frecuencias, tiempos, bandas)"]
         end
 
-      Cliente["Cliente<br/>(Swagger UI /docs, scripts)"]
+    subgraph Dependencias ["Librerias Nucleo DSP"]
+            DEPS ["NumPy · SciPy · sounddevice · soundfile "]
+        end
+
+     
+     Cliente["Cliente<br/>(Swagger UI /docs, scripts)"]
 
     subgraph API["app/main.py · FastAPI"]
         direction TB
@@ -145,13 +150,23 @@ flowchart TB
             fi["filter.py<br/>filter_single_band (M2)"]
             ap["acoustic_parameters.py<br/>apply_smoothing · apply_schroeder_integral<br/>linear_regression · calculate_parameters_from_ir (M3)"]
         end
-    end
 
+        subgraph Salida ["Salidas"]  
+            WAVOut["Audio WAV<br />(Sweep, Filtro Inverso, IR)"]
+            JSONOut["JSON Métricas ISO 3382<br />(EDT, T20, T30, D50, C80 por banda)"]
+        end
+      end
+    
+
+    AudioWAV --> Cliente 
+    Params --> Cliente   
     Cliente -->|"request HTTP"| R
     R -->|"valida con (si falla: Error 422)"| S
     R -->|"llama a"| SV
     SV -->|"resultado (WAV o JSON)"| R
     R -->|"response"| Cliente
+    Cliente --> WAVOut
+    Cliente --> JSONOut
 
     ap -.->|"usa"| fi
     ap -.->|"usa"| su
