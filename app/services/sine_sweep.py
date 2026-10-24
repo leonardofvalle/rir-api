@@ -44,7 +44,7 @@ def generate_sine_sweep_pair(
     t = np.linspace(0, duration, num_samples, endpoint=False)
 
     # Constante logaritmica y fase del sweep
-    L = np.log(f2 / f1) # noqa: N806
+    L = np.log(f2 / f1)  # noqa: N806
     phase = (2 * np.pi * f1 * duration / L) * (np.exp(t * L / duration) - 1)
 
     # Aplica la funcion seno a la fase calculada
