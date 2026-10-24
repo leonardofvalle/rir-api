@@ -15,9 +15,7 @@ ISO 3382-1.
 - Consigna, especificaciones y ruta del TP: <https://maxiyommi.github.io/signal-systems/trabajo_practico/ruta/>
 - API de referencia de la catedra (Swagger UI): <https://rir-api.onrender.com/docs>
 
-> Este README es un punto de partida: el grupo lo completa en M0 (integrantes, roles,
-> diagrama de arquitectura, branching strategy) y lo va actualizando hasta M3 (seccion
-> "Validacion" con los resultados).
+
 
 ## Integrantes
 
@@ -33,11 +31,6 @@ ISO 3382-1.
 - [uv](https://docs.astral.sh/uv/) (gestor de paquetes y entornos virtuales)
 - git y una cuenta de GitHub
 
-## Arranque: 
-Clonar el repositorio e instalar (ver "Instalacion y ejecucion"):
-
-    git clone https://github.com/leonardofvalle/rir-api.git
-    cd rir-api
 
 ## Instalacion y ejecucion
 
