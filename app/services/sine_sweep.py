@@ -39,4 +39,22 @@ def generate_sine_sweep_pair(
     .. [1] Farina, A. (2000). "Simultaneous measurement of impulse response
        and distortion with a swept-sine technique." 108th AES Convention.
     """
-    raise NotImplementedError("Implementar en Milestone 1")
+
+    num_samples = int(duration * fs)     # Numero total de muestras y vector de tiempo en segundos
+    t= np.linspace(0, duration, num_samples, endpoint=False)
+
+    # Constante logaritmica y fase del sweep
+    L = np.log(f2 / f1)            # Mide el intervalo total de frecuencias en escala logarítmica entre f1 y f2.
+    phase = (2 * np.pi * f1 * duration / L) * (np.exp(t * L / duration) - 1) #  Calcula el ángulo acumulado de la onda en cada instante de tiempo t.
+    sweep = np.sin(phase)   # Aplica la función seno a la fase calculada para obtener el vector de audio con el tono continuo que sube de grave a agudo.
+
+    # Envolvente de amplitud (-6 dB/octava) e inversion temporal
+    amplitude_envelope = np.exp(-t * L / duration)
+    inverse_filter = np.flip(sweep) * amplitude_envelope # Invertimos el sweep y aplicamos la envolvente de amplitud para obtener el filtro inverso.
+
+    # Normalizacion al pico maximo (amplitud = 1.0)
+    sweep /= np.max(np.abs(sweep))
+    inverse_filter = inverse_filter / np.max(np.abs(inverse_filter))
+
+    return sweep, inverse_filter
+

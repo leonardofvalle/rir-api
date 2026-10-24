@@ -100,3 +100,12 @@ es el router. Además, una propuesta para detallar los schemas por archivo.
 
 **Decisión propia:** Detecté que la caja de schemas tenía menos detalle que el resto y
 pedí completarla; agregué también la etiqueta del error 422 y la dependencia del filtro inverso.
+
+---
+
+## 2026-10-24 · Marcelo Flores · Gemini Notebook 
+
+**Contexto:** Issue #2 - Implementación de generate_sine_sweep_pair. 
+**Qué pregunté:** Cómo implementar la generación de sine sweep logarítmico y su filtro inverso según Farina (2000).
+**Qué obtuve:** Explicación matemática y código en NumPy con inversión temporal, envolvente de -6 dB/octava y normalización al pico. 
+**Qué aprendí:** Que A(t) atenúa los graves al multiplicar por la exponencial decreciente para compensar la densidad espectral del sweep. **Verificación:** `uv run pytest -v tests/test\_generacion.py -k "sine\_sweep"\` resultando en 3 tests pasados (XPASS).
