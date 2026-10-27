@@ -15,9 +15,7 @@ ISO 3382-1.
 - Consigna, especificaciones y ruta del TP: <https://maxiyommi.github.io/signal-systems/trabajo_practico/ruta/>
 - API de referencia de la catedra (Swagger UI): <https://rir-api.onrender.com/docs>
 
-> Este README es un punto de partida: el grupo lo completa en M0 (integrantes, roles,
-> diagrama de arquitectura, branching strategy) y lo va actualizando hasta M3 (seccion
-> "Validacion" con los resultados).
+
 
 ## Integrantes
 
@@ -33,11 +31,6 @@ ISO 3382-1.
 - [uv](https://docs.astral.sh/uv/) (gestor de paquetes y entornos virtuales)
 - git y una cuenta de GitHub
 
-## Arranque: 
-Clonar el repositorio e instalar (ver "Instalacion y ejecucion"):
-
-    git clone https://github.com/leonardofvalle/rir-api.git
-    cd rir-api
 
 ## Instalacion y ejecucion
 
@@ -112,7 +105,17 @@ hacen el procesamiento de señales.
 
 ```mermaid
 flowchart TB
-    Cliente["Cliente<br/>(Swagger UI /docs, scripts)"]
+    subgraph Entrada ["Entradas"]
+            AudioWAV["Archivo de Audio (.wav)<br />Grabación / Sine Sweep / IR"]
+            Params["Parámetros de Entrada<br />(frecuencias, tiempos, bandas)"]
+        end
+
+    subgraph Dependencias ["Librerias Nucleo DSP"]
+            DEPS ["NumPy · SciPy · sounddevice · soundfile "]
+        end
+
+     
+     Cliente["Cliente<br/>(Swagger UI /docs, scripts)"]
 
     subgraph API["app/main.py · FastAPI"]
         direction TB
@@ -140,13 +143,23 @@ flowchart TB
             fi["filter.py<br/>filter_single_band (M2)"]
             ap["acoustic_parameters.py<br/>apply_smoothing · apply_schroeder_integral<br/>linear_regression · calculate_parameters_from_ir (M3)"]
         end
-    end
 
+        subgraph Salida ["Salidas"]  
+            WAVOut["Audio WAV<br />(Sweep, Filtro Inverso, IR)"]
+            JSONOut["JSON Métricas ISO 3382<br />(EDT, T20, T30, D50, C80 por banda)"]
+        end
+      end
+    
+
+    AudioWAV --> Cliente 
+    Params --> Cliente   
     Cliente -->|"request HTTP"| R
     R -->|"valida con (si falla: Error 422)"| S
     R -->|"llama a"| SV
     SV -->|"resultado (WAV o JSON)"| R
     R -->|"response"| Cliente
+    Cliente --> WAVOut
+    Cliente --> JSONOut
 
     ap -.->|"usa"| fi
     ap -.->|"usa"| su
