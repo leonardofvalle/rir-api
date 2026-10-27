@@ -39,4 +39,23 @@ def generate_sine_sweep_pair(
     .. [1] Farina, A. (2000). "Simultaneous measurement of impulse response
        and distortion with a swept-sine technique." 108th AES Convention.
     """
-    raise NotImplementedError("Implementar en Milestone 1")
+    # Numero total de muestras y vector de tiempo en segundos
+    num_samples = int(duration * fs)
+    t = np.linspace(0, duration, num_samples, endpoint=False)
+
+    # Constante logaritmica y fase del sweep
+    L = np.log(f2 / f1)  # noqa: N806
+    phase = (2 * np.pi * f1 * duration / L) * (np.exp(t * L / duration) - 1)
+
+    # Aplica la funcion seno a la fase calculada
+    sweep = np.sin(phase)
+
+    # Envolvente de amplitud (-6 dB/octava) e inversion temporal
+    amplitude_envelope = np.exp(-t * L / duration)
+    inverse_filter = np.flip(sweep) * amplitude_envelope
+
+    # Normalizacion al pico maximo (amplitud = 1.0)
+    sweep /= np.max(np.abs(sweep))
+    inverse_filter = inverse_filter / np.max(np.abs(inverse_filter))
+
+    return sweep, inverse_filter
