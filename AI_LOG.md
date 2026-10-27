@@ -106,6 +106,22 @@ pedí completarla; agregué también la etiqueta del error 422 y la dependencia 
 ## 2026-10-24 · Marcelo Flores · Gemini Notebook 
 
 **Contexto:** Issue #2 - Implementación de generate_sine_sweep_pair. 
+
 **Qué pregunté:** Cómo implementar la generación de sine sweep logarítmico y su filtro inverso según Farina (2000).
+
 **Qué obtuve:** Explicación matemática y código en NumPy con inversión temporal, envolvente de -6 dB/octava y normalización al pico. 
-**Qué aprendí:** Que A(t) atenúa los graves al multiplicar por la exponencial decreciente para compensar la densidad espectral del sweep. **Verificación:** `uv run pytest -v tests/test\_generacion.py -k "sine\_sweep"\` resultando en 3 tests pasados (XPASS).
+
+**Qué aprendí:** Que A(t) atenúa los graves al multiplicar por la exponencial decreciente para compensar la densidad espectral del sweep. 
+
+**Verificación:** `uv run pytest -v tests/test\_generacion.py -k "sine\_sweep"\` resultando en 3 tests pasados (XPASS).
+
+## 2026-10-27 · Marcelo · Gemini Notebook 
+**Contexto:** Issue #5 - Gráficas de validación de M1 y creación del script `generar_graficas.py`. 
+
+**Qué pregunté:** Asistencia para escribir y depurar el script `generar_graficas.py` que genera las imágenes de validación de M1 (espectro del ruido rosa, espectrograma de sine sweep y la convolución con el filtro inverso). 
+
+**Qué obtuve:** El código completo del script de generación y resolución paso a paso de errores de sintaxis (coma en `np.polyval`, corrección de `spectrogram` y parámetros de `plt.grid`).
+
+**Qué aprendí:** A corregir errores de sintaxis/linter en Matplotlib/SciPy y la importancia de verificar que el archivo esté guardado correctamente antes de ejecutar con `uv run`.
+
+**Verificación:** Ejecución exitosa con `uv run python generar_graficas.py`, comprobando la creación de `docs/m1/espectrograma_sine_sweep.png` y `docs/m1/convolucion_sweep_filtro_inverso.png`.
