@@ -42,6 +42,32 @@ def play_and_record(signal: np.ndarray, fs: int, record_duration: float) -> np.n
     RuntimeError
         Si no hay un dispositivo de audio disponible (con un mensaje informativo).
     """
-    # Importar sounddevice ACA adentro (import perezoso), no al inicio del modulo:
-    # import sounddevice as sd
-    raise NotImplementedError("Implementar en Milestone 1")
+    import sounddevice as sd
+
+    # Cantidad de muestras que tiene que durar la grabacion
+    n_total = int(record_duration * fs)
+    signal = np.asarray(signal)
+
+    # La grabacion no puede ser mas corta que la señal
+    if signal.shape[0] > n_total:
+        raise ValueError(
+            f"record_duration ({record_duration} s) debe ser mayor o igual "
+            f"a la duracion de la senal ({signal.shape[0] / fs:.2f} s)."
+        )
+
+    # Agregar silencio al final para grabar la cola de reverberacion.
+    faltan = n_total - signal.shape[0]
+    ancho = [(0, faltan)] + [(0, 0)] * (signal.ndim - 1)
+    signal_con_cola = np.pad(signal, ancho, mode="constant")
+
+    # Reproducir y grabar al mismo tiempo; si no hay placa, error
+    try:
+        recording = sd.playrec(signal_con_cola, samplerate=fs, channels=1)
+        sd.wait()
+    except sd.PortAudioError as e:
+        raise RuntimeError(
+            "No se encontro un dispositivo de audio disponible. "
+            "Revisar que la placa este conectada y configurada."
+        ) from e
+
+    return recording

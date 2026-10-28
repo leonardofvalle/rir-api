@@ -31,6 +31,11 @@ ISO 3382-1.
 - [uv](https://docs.astral.sh/uv/) (gestor de paquetes y entornos virtuales)
 - git y una cuenta de GitHub
 
+## Arranque 
+Clonar el repositorio e instalar (ver "Instalacion y ejecucion"):
+
+    git clone https://github.com/leonardofvalle/rir-api.git
+    cd rir-api
 
 ## Instalacion y ejecucion
 
@@ -50,8 +55,6 @@ La API queda disponible en `http://localhost:8000`. Documentacion interactiva:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-`uv sync` genera un `uv.lock` con las versiones exactas instaladas: **commitéenlo** en el
-repositorio del grupo para que todos (y el CI) usen las mismas versiones.
 
 ## Estructura del proyecto
 
@@ -106,16 +109,11 @@ hacen el procesamiento de señales.
 ```mermaid
 flowchart TB
     subgraph Entrada ["Entradas"]
-            AudioWAV["Archivo de Audio (.wav)<br />Grabación / Sine Sweep / IR"]
-            Params["Parámetros de Entrada<br />(frecuencias, tiempos, bandas)"]
-        end
+        AudioWAV["Archivo de Audio (.wav)<br />Grabación / Sine Sweep / IR"]
+        Params["Parámetros de Entrada<br />(frecuencias, tiempos, bandas)"]
+    end
 
-    subgraph Dependencias ["Librerias Nucleo DSP"]
-            DEPS ["NumPy · SciPy · sounddevice · soundfile "]
-        end
-
-     
-     Cliente["Cliente<br/>(Swagger UI /docs, scripts)"]
+    Cliente["Cliente<br/>(Swagger UI /docs, scripts)"]
 
     subgraph API["app/main.py · FastAPI"]
         direction TB
@@ -128,12 +126,12 @@ flowchart TB
             Rio["audio_http.py<br/>wav_response · uploaded_file"]
         end
 
-      subgraph S["schemas/ (Pydantic)"]
+        subgraph S["schemas/ (Pydantic)"]
             Ss["signals.py<br/>parametros de pink-noise y sine-sweep (M1)<br/>y de synthetic-ir (M2)"]
             Sf["filters.py<br/>parametros de single-band (M2)"]
             Sa["acoustics.py<br/>request y respuesta de parameters (M3)"]
             Su["utils.py<br/>parametros de schroeder y smoothing (M3)"]
-        end    
+        end
 
         subgraph SV["services/"]
             pn["pink_noise.py<br/>generate_pink_noise (M1)"]
@@ -143,16 +141,19 @@ flowchart TB
             fi["filter.py<br/>filter_single_band (M2)"]
             ap["acoustic_parameters.py<br/>apply_smoothing · apply_schroeder_integral<br/>linear_regression · calculate_parameters_from_ir (M3)"]
         end
+    end
 
-        subgraph Salida ["Salidas"]  
-            WAVOut["Audio WAV<br />(Sweep, Filtro Inverso, IR)"]
-            JSONOut["JSON Métricas ISO 3382<br />(EDT, T20, T30, D50, C80 por banda)"]
-        end
-      end
-    
+    subgraph Dependencias ["Librerias Nucleo DSP"]
+        DEPS["NumPy · SciPy · sounddevice · soundfile"]
+    end
 
-    AudioWAV --> Cliente 
-    Params --> Cliente   
+    subgraph Salida ["Salidas"]
+        WAVOut["Audio WAV<br />(Sweep, Filtro Inverso, IR)"]
+        JSONOut["JSON Métricas ISO 3382<br />(EDT, T20, T30, D50, C80 por banda)"]
+    end
+
+    AudioWAV --> Cliente
+    Params --> Cliente
     Cliente -->|"request HTTP"| R
     R -->|"valida con (si falla: Error 422)"| S
     R -->|"llama a"| SV
@@ -161,6 +162,7 @@ flowchart TB
     Cliente --> WAVOut
     Cliente --> JSONOut
 
+    SV -.->|"usa"| DEPS
     ap -.->|"usa"| fi
     ap -.->|"usa"| su
     su -.->|"usa filtro inverso"| ss
