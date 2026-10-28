@@ -1,26 +1,27 @@
 import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.signal as sps
 
-#Importamos las funciones desarrolladas en el proyecto
+# Importamos las funciones desarrolladas en el proyecto
 from app.services.pink_noise import generate_pink_noise
 from app.services.sine_sweep import generate_sine_sweep_pair
 
 # Crea la carpeta docs/m1 si aun no existe en el disco
 os.makedirs("docs/m1", exist_ok=True)
-fs = 44100 # Frecuencia de muestreo estandar (44.1 kHz)
+fs = 44100  # Frecuencia de muestreo estandar (44.1 kHz)
 
 print("Generando graficas de validacion para M1...")
 
-#-----------------------------------------------------
+# -----------------------------------------------------
 # 1. Espectro del Ruido Rosa (-3 dB / octava)
-#-----------------------------------------------------
+# -----------------------------------------------------
 try:
     pink = generate_pink_noise(5.0, fs)
     f, pxx = sps.welch(pink, fs=fs, nperseg=8192)
 
-    # Filtrar la banda de 100 Hz a 20 kHz para calcular la pendiente de caida 
+    # Filtrar la banda de 100 Hz a 20 kHz para calcular la pendiente de caida
     banda = (f >= 100) & (f <= 10000)
     f_banda = f[banda]
     pxx_banda_db = 10 * np.log10(pxx[banda])
@@ -33,18 +34,18 @@ try:
     plt.title("Validacion M1: Espectro del Ruido Rosa (-3 dB/octava)", fontsize=12)
     plt.xlabel("Frecuencia [Hz]")
     plt.ylabel("PSD [dB/Hz]")
-    plt.grid(True, which="both" , linestyle="--", alpha=0.5)
+    plt.grid(True, which="both", linestyle="--", alpha=0.5)
     plt.legend()
     plt.tight_layout()
     plt.savefig("docs/m1/espectro_ruido_rosa.png", dpi=300)
     plt.close()
     print("✓ Creado: docs/m1/espectro_ruido_rosa.png")
-except Exception as e: 
+except Exception as e:
     print(f"⚠ Nota sobre Ruido Rosa: {e}")
 
-#-----------------------------------------------------
+# -----------------------------------------------------
 # 2. Espectrograma del Sine Sweep Logaritmico (20 Hz - 20 kHz)
-#-----------------------------------------------------
+# -----------------------------------------------------
 sweep, inverse_filter = generate_sine_sweep_pair(3.0, 20.0, 20000.0, fs)
 f_spec, t_spec, Sxx = sps.spectrogram(sweep, fs=fs, nperseg=2048, noverlap=1024)
 
@@ -81,7 +82,3 @@ plt.close()
 print("✓ Creado: docs/m1/convolucion_sweep_filtro_inverso.png")
 
 print("\n¡Proceso de generación finalizado con éxito!")
-
-
-
-
