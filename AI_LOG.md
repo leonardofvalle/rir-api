@@ -109,3 +109,20 @@ pedí completarla; agregué también la etiqueta del error 422 y la dependencia 
 **Qué pregunté:** Cómo implementar la generación de sine sweep logarítmico y su filtro inverso según Farina (2000).
 **Qué obtuve:** Explicación matemática y código en NumPy con inversión temporal, envolvente de -6 dB/octava y normalización al pico. 
 **Qué aprendí:** Que A(t) atenúa los graves al multiplicar por la exponencial decreciente para compensar la densidad espectral del sweep. **Verificación:** `uv run pytest -v tests/test\_generacion.py -k "sine\_sweep"\` resultando en 3 tests pasados (XPASS).
+
+---
+
+## 2026-10-28 · Leonardo Valle · Claude (claude.ai)
+
+**Contexto:** Issue #3, implementacion de `play_and_record`.
+
+**Qué pregunté:** Primero, una guia paso a paso para implementarla yo y chequeo del código por errores de sintaxis.
+
+**Qué obtuve:** La implementacion completa: relleno con ceros para grabar la cola de
+reverberacion, `sd.playrec` + `sd.wait`, y conversion de `PortAudioError` a `RuntimeError`.
+
+**Qué aprendí:** Que `playrec` graba tantas muestras como reproduce (por eso se agrega
+silencio al final), como funciona `np.pad` en 1D y 2D, y por que el import de
+sounddevice va dentro de la funcion (para que el test pueda reemplazarlo por un mock).
+
+**Verificación:** El test `test_play_and_record_shape` pasa (XPASS) y ruff no marca errores.
