@@ -125,3 +125,20 @@ pedí completarla; agregué también la etiqueta del error 422 y la dependencia 
 **Qué aprendí:** A corregir errores de sintaxis/linter en Matplotlib/SciPy y la importancia de verificar que el archivo esté guardado correctamente antes de ejecutar con `uv run`.
 
 **Verificación:** Ejecución exitosa con `uv run python generar_graficas.py`, comprobando la creación de `docs/m1/espectrograma_sine_sweep.png` y `docs/m1/convolucion_sweep_filtro_inverso.png`.
+
+---
+
+## 2026-10-28 · Leonardo Valle · Claude (claude.ai)
+
+**Contexto:** Issue #3, implementacion de `play_and_record`.
+
+**Qué pregunté:** Primero, una guia paso a paso para implementarla yo y chequeo del código por errores de sintaxis.
+
+**Qué obtuve:** La implementacion completa: relleno con ceros para grabar la cola de
+reverberacion, `sd.playrec` + `sd.wait`, y conversion de `PortAudioError` a `RuntimeError`.
+
+**Qué aprendí:** Que `playrec` graba tantas muestras como reproduce (por eso se agrega
+silencio al final), como funciona `np.pad` en 1D y 2D, y por que el import de
+sounddevice va dentro de la funcion (para que el test pueda reemplazarlo por un mock).
+
+**Verificación:** El test `test_play_and_record_shape` pasa (XPASS) y ruff no marca errores.
