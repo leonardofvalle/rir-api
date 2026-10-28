@@ -31,6 +31,11 @@ ISO 3382-1.
 - [uv](https://docs.astral.sh/uv/) (gestor de paquetes y entornos virtuales)
 - git y una cuenta de GitHub
 
+## Arranque 
+Clonar el repositorio e instalar (ver "Instalacion y ejecucion"):
+
+    git clone https://github.com/leonardofvalle/rir-api.git
+    cd rir-api
 
 ## Instalacion y ejecucion
 
@@ -50,8 +55,6 @@ La API queda disponible en `http://localhost:8000`. Documentacion interactiva:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-`uv sync` genera un `uv.lock` con las versiones exactas instaladas: **commitéenlo** en el
-repositorio del grupo para que todos (y el CI) usen las mismas versiones.
 
 ## Estructura del proyecto
 
