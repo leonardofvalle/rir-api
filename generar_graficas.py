@@ -51,7 +51,7 @@ f_spec, t_spec, Sxx = sps.spectrogram(sweep, fs=fs, nperseg=2048, noverlap=1024)
 
 plt.figure(figsize=(9, 4.5))
 plt.pcolormesh(t_spec, f_spec, 10 * np.log10(Sxx + 1e-12), shading="gouraud", cmap="magma")
-plt.title("Validacion M1: Espectograma del Sine Sweep (20 Hz - 20 kHz)", fontsize=12)
+plt.title("Validacion M1: Espectrograma del Sine Sweep (20 Hz - 20 kHz)", fontsize=12)
 plt.xlabel("Tiempo [s]")
 plt.ylabel("Frecuencia [Hz]")
 plt.colorbar(label="Potencia/Frecuencia [dB/Hz]")
