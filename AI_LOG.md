@@ -142,3 +142,23 @@ silencio al final), como funciona `np.pad` en 1D y 2D, y por que el import de
 sounddevice va dentro de la funcion (para que el test pueda reemplazarlo por un mock).
 
 **Verificación:** El test `test_play_and_record_shape` pasa (XPASS) y ruff no marca errores.
+
+---
+
+## 2026-10-28 · Leonardo Valle · Claude (claude.ai)
+
+**Contexto:** Issue #4, endpoints de M1 (pink-noise y sine-sweep).
+
+**Qué pregunté:** Como implementar los endpoints a partir de los tests de `tests/test_api.py`,
+el router de ejemplo (`health.py`), `audio_http.py` y los services de mis compañeros.
+
+**Qué obtuve:** El codigo de los schemas (`app/schemas/signals.py`), del router
+(`app/routers/signals.py`) y el registro en `app/main.py`, con la explicacion de cada parte.
+
+**Qué aprendí:** Que los tests definen el contrato de cada endpoint (nombres de los campos y
+respuestas esperadas), que la validacion la hace FastAPI con el schema antes de llegar al
+router (por eso una duracion negativa da 422 sin ejecutar codigo), y por que conviene
+limitar `end_freq` a la frecuencia de Nyquist.
+
+**Verificación:** Probe los endpoints a mano en `/docs` (200 con WAV descargable, y 422
+con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca xfail.
