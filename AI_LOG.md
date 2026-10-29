@@ -128,6 +128,34 @@ pedí completarla; agregué también la etiqueta del error 422 y la dependencia 
 
 ---
 
+## 2026-10-27 · Matías Archelli · Microsoft Copilot
+
+**Contexto:** Issue #1 - Implementar generate_pink_noise
+
+**Qué pregunté:** Cómo aplicar un filtro a un ruido blanco para generar un ruido rosa
+
+**Qué obtuve:** Se recomendó usar las funciones de numpy para la transformada rápida de Fourier y la transformada rápida inversa para generar el ruido rosa.
+
+**Qué aprendí:** Cómo utilizar estas funciones así como su objetivo de transformar la señal en frecuencia para realizar el filtro y luego obtener nuevamente la señal temporal.
+
+**Verificación:** Comprobación con Microsoft Copilot del código hasta el momento
+
+---
+
+## 2026-10-27 · Matías Archelli · Microsoft Copilot
+
+**Contexto:** Issue #1 - Implementar generate_pink_noise
+
+**Qué pregunté:** El código realizado es correcto para generar ruido rosa
+
+**Qué obtuve:** Recomendación de generar un array de ceros para evitar a división por 0.
+
+**Qué aprendí:** Aprendí una nueva técnica para evitar inconvenientes con la frecuencia de 0 Hz. Se genera un array de ceros del tamaño de la muestra para luego realizar un slicing de [1:] (dejando el primer valor como 0) de forma que no se realiza una division por 0 al realizar el filtro y luego solo se realiza una multiplicación por 0 cuando se aplica el filtro al espectro de ruido blanco.
+
+**Verificación:** Pasó los tests para la funcion generate_pink_noise de tests/generacion.py (XPASS)
+
+---
+
 ## 2026-10-28 · Leonardo Valle · Claude (claude.ai)
 
 **Contexto:** Issue #3, implementacion de `play_and_record`.
