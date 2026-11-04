@@ -39,6 +39,10 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     raise NotImplementedError("Implementar en Milestone 2")
 
 
+import numpy as np
+import scipy.signal as sps
+
+
 def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: int) -> np.ndarray:
     """Sintetiza una respuesta al impulso con valores de T60 conocidos por banda.
 
@@ -60,8 +64,59 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
     -------
     np.ndarray
         Respuesta al impulso sintetizada (array 1D de ``int(duration * fs)`` muestras).
+
+    Raises
+    ------
+    ValueError
+        Si `duration` es menor o igual a 0, o si `t60_values` esta vacio.
     """
-    raise NotImplementedError("Implementar en Milestone 2")
+    if duration <= 0:
+        raise ValueError("La duracion debe ser mayor a 0 segundos.")
+    if not t60_values:
+        raise ValueError("El diccionario de valores T60_values no puede estar vacio.")
+
+    num_samples = int(duration * fs)
+    t = np.linspace(0, duration, num_samples, endpoint=False)
+    ir_total = np.zeros(num_samples)
+
+    rng = np.random.default_rng(42)
+
+    for fc, t60 in t60_values.items():
+        if t60 <= 0:
+            raise ValueError(
+                f"El valor de T60 para la frecuencia {fc} Hz debe ser mayor a 0 segundos."
+            )
+
+        # 1. Ruido blanco por banda
+        white_noise = rng.normal(0, 1, num_samples)
+
+        # 2. Filtrado pasa-banda por octava (f_low = fc / sqrt(2), f_high = fc * sqrt(2))
+        f_low = fc / np.sqrt(2)
+        f_high = fc * np.sqrt(2)
+
+        # Asegurar que las frecuencias no superen el límite de Nyquist
+        nyquist = fs / 2.0
+        if f_high >= nyquist:
+            f_high = nyquist * 0.99
+        if f_low <= 0:
+            f_low = 1.0
+
+        sos = sps.butter(N=4, Wn=[f_low, f_high], btype="bandpass", fs=fs, output="sos")
+        band_noise = sps.sosfilt(sos, white_noise)
+
+        # 3. Envolvente de decaimiento exponencial
+        alpha = (3.0 * np.log(10.0)) / t60
+        envelope = np.exp(-alpha * t)
+
+        # 4. Acumular la componente de la banda
+        ir_total += band_noise * envelope
+
+    # Normalización al pico máximo
+    max_amp = np.max(np.abs(ir_total))
+    if max_amp > 0:
+        ir_total = (ir_total / max_amp) * 0.9
+
+    return ir_total
 
 
 def get_impulse_response(recording: np.ndarray, inverse_filter: np.ndarray) -> np.ndarray:
