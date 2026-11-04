@@ -6,6 +6,7 @@ Milestone 2: Procesamiento de la respuesta al impulso.
 from pathlib import Path
 
 import numpy as np
+import scipy.signal as sps
 
 
 def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
@@ -82,8 +83,28 @@ def get_impulse_response(recording: np.ndarray, inverse_filter: np.ndarray) -> n
     -------
     np.ndarray
         Respuesta al impulso estimada, normalizada.
+
+    Raises
+    ------
+    ValueError
+        Si alguna de las señales de entrada esta vacia.
     """
-    raise NotImplementedError("Implementar en Milestone 2")
+    if recording.size == 0 or inverse_filter.size == 0:
+        raise ValueError("Las señales de entrada no pueden estar vacías.")
+
+    # 1. Convolución rápida en el dominio de la frecuencia (FFT)
+    ir_raw = sps.fftconvolve(recording, inverse_filter, mode="full")
+
+    # 2. Recortar la señal para que comience en el pico de mayor amplitud
+    peak_idx = int(np.argmax(np.abs(ir_raw)))
+    ir = ir_raw[peak_idx:]
+
+    # 3. Normalizar al pico máximo
+    max_amplitude = np.max(np.abs(ir))
+    if max_amplitude > 0:
+        ir = ir / max_amplitude
+
+    return ir
 
 
 def logarithmic_scale_conversion(signal: np.ndarray) -> np.ndarray:
