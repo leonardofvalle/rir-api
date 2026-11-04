@@ -259,12 +259,12 @@ A continuacion se presenta la evidencia gráfica de validación de las señales 
 
 ### M2 · Procesamiento de la RI (`v0.2.0`)
 
-- [ ] `load_audio()`, `generate_synthetic_ir()`, `get_impulse_response()` y
+- [x] `load_audio()`, `generate_synthetic_ir()`, `get_impulse_response()` y
       `logarithmic_scale_conversion()` en `app/services/signal_utils.py`.
-- [ ] `filter_single_band()` en `app/services/filter.py`.
-- [ ] Endpoints `POST /api/v1/signals/synthetic-ir` y `POST /api/v1/filters/single-band`
+- [x] `filter_single_band()` en `app/services/filter.py`.
+- [x] Endpoints `POST /api/v1/signals/synthetic-ir` y `POST /api/v1/filters/single-band`
       (recibe un WAV subido).
-- [ ] Tests de `tests/test_procesamiento.py` y los de M2 en `tests/test_api.py` pasando.
+- [x] Tests de `tests/test_procesamiento.py` y los de M2 en `tests/test_api.py` pasando.
 
 ### M3 · Producto final (`v1.0.0`)
 
