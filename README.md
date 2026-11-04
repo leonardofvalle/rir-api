@@ -324,45 +324,39 @@ A continuación se presenta la evidencia experimental de la validación del sist
 
 ---
 
-###  1. Gráficas de Validación (Milestones 1 a 3)
+### Milestone 1: Generación de Señales 
 
-Las imágenes de validación se encuentran almacenadas en la carpeta `docs/`:
+Las imágenes de validación se encuentran almacenadas en la carpeta `docs/m1/`:
 
-#### Milestone 1: Generación de Señales (`docs/m1/`)
-* **Espectro del Ruido Rosa (`espectro_ruido_rosa.png`):** PSD mediante el método de Welch con pendiente de **-3 dB/octava** ($1/f$). 
-* **Espectrograma del Sine Sweep (`espectrograma_sine_sweep.png`):** Sweep logarítmico de 20 Hz a 20 kHz con fase continua. 
-* **Convolución Sweep × Filtro Inverso (`convolucion_sweep_filtro_inverso.png`):** Impulso comprimido tipo delta con relación pico/resto superior a 60 dB.
 
-#### Milestone 2: Respuesta al Impulso (`docs/m2/`) 
-* **Deconvolución de RIR:** Respuesta al impulso obtenida por FFT (`scipy.signal.fftconvolve`), recortada desde el pico de máxima amplitud y normalizada.
+#### 1 Espectro del Ruido Rosa 
+![Espectro del Ruido Rosa](docs/m1/espectro_ruido_rosa.png) 
+* **Análisis:** Muestra la densidad espectral de potencia (PSD) del ruido rosa obtenida mediante el método de Welch. Se verifica una pendiente de decaimiento aproximada de **-3 dB/octava** (proporcional a $1/f$), garantizando energía constante por banda de octava.
 
-#### Milestone 3: Parámetros Acústicos (`docs/m3/`) 
-* **Curva de Integración Inversa de Schroeder:** Integración acumulativa hacia atrás para la estimación de la curva de decaimiento de energía. 
+#### 2.Espectrograma del Sine Sweep Logarítmico 
+![Espectrograma Sine Sweep](docs/m1/espectrograma_sine_sweep.png) 
+* **Análisis:** Ilustra la evolución temporal de la frecuencia instantánea del sweep desde 20 Hz hasta 20 kHz. Se confirma una trayectoria logarítmica lineal (mismo tiempo por octava) sin saltos de fase.
+
+#### 3. Convolución Sweep × Filtro Inverso (Impulso Delta) 
+![Convolución Sweep e Inverso](docs/m1/convolucion_sweep_filtro_inverso.png) 
+* **Análisis:** Resultado de la convolución entre el Sine Sweep y su filtro inverso modulado ($A(t)$ a -6 dB/octava). La señal se comprime en un único impulso simétrico con una relación pico/resto cercana a los **50 dB**, validando el proceso de deconvolución.
+
+###  Milestone 2: Procesamiento de la Respuesta al Impulso
+
+* **Síntesis y Deconvolución de RIR:** Obtención de la respuesta al impulso sintética y real mediante deconvolución por FFT (`scipy.signal.fftconvolve`) entre la grabación en recinto y el filtro inverso del sweep, recortando desde el pico de máxima amplitud y normalizando al pico unitario.
 
 ---
 
-###  2. Comparación de Parámetros vs. REW (Room EQ Wizard) 
+### Pruebas de Endpoints HTTP (Ejemplos `curl`)
 
-Comparativa entre los parámetros acústicos calculados por **RIR-API** y los valores obtenidos con el software de referencia **REW**: 
-| Parámetro | Banda de Octava | RIR-API | REW (Referencia) | Error Relativo (%) | 
-| :--- | :---: | :---: | :---: | :---: | 
-| **EDT** (s) | 1 kHz | 1.45 s | 1.44 s | +0.69 % | 
-| **T20** (s) | 1 kHz | 1.42 s | 1.41 s | +0.71 % |
-| **T30** (s) | 1 kHz | 1.40 s | 1.40 s | 0.00 % | 
-| **C50** (dB) | 1 kHz | -2.1 dB | -2.0 dB | -5.00 % | 
-| **C80** (dB) | 1 kHz | +1.2 dB | +1.3 dB | -7.69 % | 
-
---- 
-
-###  Pruebas de Endpoints HTTP (Ejemplos `curl`) 
-
-#### Generar Ruido Rosa (`POST /api/v1/signals/pink-noise`) 
+#### Generar Ruido Rosa (`POST /api/v1/signals/pink-noise`)
 ```bash 
-curl -X POST "http://localhost:8000/api/v1/signals/pink-noise" \ 
-     -H "Content-Type: application/json" \ 
+curl -X POST "http://localhost:8000/api/v1/signals/pink-noise" \
+     -H "Content-Type: application/json" \
      -d '{"duration": 5.0, "sample_rate": 44100}' \ 
      --output ruido_rosa.wav
 ```
+
 
 #### Generar Sine Sweep y Filtro Inverso (`POST /api/v1/signals/sine-sweep`) 
 ```bash
@@ -377,6 +371,7 @@ curl -X POST "http://localhost:8000/api/v1/signals/sine-sweep" \
      -H "Content-Type: application/json" \
      -d '{"duration": 5.0, "start_freq": 20.0, "end_freq": 20000.0, "inverse": true}' \
      --output filtro_inverso.wav
+```
 
 ## Referencias
 
