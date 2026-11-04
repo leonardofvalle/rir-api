@@ -37,7 +37,24 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
         Si el archivo no es un audio valido o el formato no es soportado
         (con un mensaje claro que indique el archivo y el motivo).
     """
-    raise NotImplementedError("Implementar en Milestone 2")
+    import soundfile as sf
+
+    path = Path(path)
+
+    if not path.exists():
+        raise FileNotFoundError(f"No existe el archivo: {path}")
+
+    try:
+        signal, fs = sf.read(path, dtype="float64")
+    except sf.LibsndfileError as e:
+        raise ValueError(
+            f"Archivo de audio inválido o formato no soportado: {path}. Motivo: {e}"
+        ) from e
+
+    if signal.ndim > 1:
+        signal = signal.mean(axis=1)
+
+    return signal, fs
 
 
 def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: int) -> np.ndarray:
@@ -123,4 +140,17 @@ def logarithmic_scale_conversion(signal: np.ndarray) -> np.ndarray:
     np.ndarray
         Senal en dB, normalizada a 0 dB en el maximo.
     """
-    raise NotImplementedError("Implementar en Milestone 2")
+
+    # Se define un piso de ruido de -120 dB
+    piso: int = -120
+
+    # Epsilon correspondiente al piso de ruido
+    eps: float = 10 ** (piso / 20)
+
+    # Valor absoluto de la señal
+    x: np.ndarray = np.abs(signal)
+
+    # Escalamiento logaritmico
+    log_scale: np.ndarray = 20 * np.log10(np.maximum(x / (np.max(x)), eps))
+
+    return log_scale
