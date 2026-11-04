@@ -190,3 +190,20 @@ limitar `end_freq` a la frecuencia de Nyquist.
 
 **Verificación:** Probe los endpoints a mano en `/docs` (200 con WAV descargable, y 422
 con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca xfail.
+
+---
+
+## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
+
+**Contexto:** Documentación y evidencia de validación del Milestone 1 (`README.md`). 
+**Qué pregunté:** Cómo redactar los ejemplos de comandos `curl` para los endpoints de M1 (`pink-noise` y `sine-sweep`) y cómo estructurar la sección de validación incluyendo las 3 imágenes de evidencia en el `README.md`. 
+**Qué obtuve:** La estructura de los comandos `curl`, la sintaxis de rutas relativas para las imágenes en `docs/m1/` (`espectro_ruido_rosa.png`, `espectrograma_sine_sweep.png` y `convolucion_sweep_filtro_inverso.png`) y sus correspondientes observaciones técnicas. 
+**Qué aprendí:** Que las rutas en Markdown para GitHub deben usar siempre barras normales (`/`) en lugar de barras invertidas (`\`) para evitar enlaces rotos, y la importancia de mantener la trazabilidad de los criterios de aceptación en el `README.md`. 
+**Verificación:** Commit `c1e18a9` enviado en la rama `docs/seccion-validacion` y Pull Request creado en GitHub.
+
+---
+
+## 2026-11-04 · Marcelo · Gemini (Gemini Notebook) 
+**Contexto:** Milestone 2, implementación de `generate_synthetic_ir` en `app/services/signal_utils.py`. **Qué pregunté:** Cómo implementar `generate_synthetic_ir` respetando la firma del proyecto (síntesis por bandas de octava con decaimiento $T_{60}$), Type Hints completos y docstring formato NumPy. 
+**Qué obtuve:** La función completa en `app/services/signal_utils.py` que genera ruido blanco, lo filtra por cada banda de octava con filtros Butterworth pasa-banda, le aplica la envolvente exponencial $e^{-\alpha t}$ con $\alpha = \frac{3 \ln(10)}{T_{60}}$, suma las bandas y normaliza el resultado al 90%. **Qué aprendí:** Cómo funciona el filtrado por bandas de octava con `scipy.signal.butter` (`output="sos"`), el cálculo matemático de la tasa de decaimiento exponencial según el tiempo $T_{60}$, y el formateo estricto con Ruff. 
+**Verificación:** Ejecución de `pytest -v tests/test_procesamiento.py` con los tests `test_synthetic_ir_duration` y `test_synthetic_ir_decay` pasando exitosamente. Commit `92481d9` pusheado en `feature/synthetic-ir`.
