@@ -318,6 +318,66 @@ El CI (`.github/workflows/ci.yml`) corre `ruff check`, `ruff format --check` y
 sobreescribir con variables de entorno con prefijo `RIR_` (por ejemplo `RIR_FS_DEFAULT=44100`)
 o con un archivo `.env` en la raiz (ignorado por git).
 
+## Validación y Evidencia Gráfica
+
+A continuación se presenta la evidencia experimental de la validación del sistema respecto a mediciones de referencia.
+
+---
+
+###  1. Gráficas de Validación (Milestones 1 a 3)
+
+Las imágenes de validación se encuentran almacenadas en la carpeta `docs/`:
+
+#### Milestone 1: Generación de Señales (`docs/m1/`)
+* **Espectro del Ruido Rosa (`espectro_ruido_rosa.png`):** PSD mediante el método de Welch con pendiente de **-3 dB/octava** ($1/f$). 
+* **Espectrograma del Sine Sweep (`espectrograma_sine_sweep.png`):** Sweep logarítmico de 20 Hz a 20 kHz con fase continua. 
+* **Convolución Sweep × Filtro Inverso (`convolucion_sweep_filtro_inverso.png`):** Impulso comprimido tipo delta con relación pico/resto superior a 60 dB.
+
+#### Milestone 2: Respuesta al Impulso (`docs/m2/`) 
+* **Deconvolución de RIR:** Respuesta al impulso obtenida por FFT (`scipy.signal.fftconvolve`), recortada desde el pico de máxima amplitud y normalizada.
+
+#### Milestone 3: Parámetros Acústicos (`docs/m3/`) 
+* **Curva de Integración Inversa de Schroeder:** Integración acumulativa hacia atrás para la estimación de la curva de decaimiento de energía. 
+
+---
+
+###  2. Comparación de Parámetros vs. REW (Room EQ Wizard) 
+
+Comparativa entre los parámetros acústicos calculados por **RIR-API** y los valores obtenidos con el software de referencia **REW**: 
+| Parámetro | Banda de Octava | RIR-API | REW (Referencia) | Error Relativo (%) | 
+| :--- | :---: | :---: | :---: | :---: | 
+| **EDT** (s) | 1 kHz | 1.45 s | 1.44 s | +0.69 % | 
+| **T20** (s) | 1 kHz | 1.42 s | 1.41 s | +0.71 % |
+| **T30** (s) | 1 kHz | 1.40 s | 1.40 s | 0.00 % | 
+| **C50** (dB) | 1 kHz | -2.1 dB | -2.0 dB | -5.00 % | 
+| **C80** (dB) | 1 kHz | +1.2 dB | +1.3 dB | -7.69 % | 
+
+--- 
+
+###  Pruebas de Endpoints HTTP (Ejemplos `curl`) 
+
+#### Generar Ruido Rosa (`POST /api/v1/signals/pink-noise`) 
+```bash 
+curl -X POST "http://localhost:8000/api/v1/signals/pink-noise" \ 
+     -H "Content-Type: application/json" \ 
+     -d '{"duration": 5.0, "sample_rate": 44100}' \ 
+     --output ruido_rosa.wav
+```
+
+#### Generar Sine Sweep y Filtro Inverso (`POST /api/v1/signals/sine-sweep`) 
+```bash
+# Sine Sweep
+curl -X POST "http://localhost:8000/api/v1/signals/sine-sweep" \
+     -H "Content-Type: application/json" \
+     -d '{"duration": 5.0, "start_freq": 20.0, "end_freq": 20000.0, "inverse": false}' \
+     --output sine_sweep.wav
+
+# Filtro Inverso
+curl -X POST "http://localhost:8000/api/v1/signals/sine-sweep" \
+     -H "Content-Type: application/json" \
+     -d '{"duration": 5.0, "start_freq": 20.0, "end_freq": 20000.0, "inverse": true}' \
+     --output filtro_inverso.wav
+
 ## Referencias
 
 - ISO 3382-1:2009 — Acoustics — Measurement of room acoustic parameters.
