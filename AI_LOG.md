@@ -190,3 +190,45 @@ limitar `end_freq` a la frecuencia de Nyquist.
 
 **Verificación:** Probe los endpoints a mano en `/docs` (200 con WAV descargable, y 422
 con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca xfail.
+
+---
+
+## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
+
+**Contexto:** Issue #15, documentación y evidencia de validación en README.md.
+
+**Qué pregunté:** Cómo redactar los ejemplos de comandos curl para los endpoints de M1 (pink-noise y sine-sweep) y cómo estructurar la sección de validación incluyendo las 3 imágenes de evidencia en el README.md.
+
+**Qué obtuve:** La estructura de los comandos curl, la sintaxis de rutas relativas para las imágenes en docs/m1/ (espectro_ruido_rosa.png, espectrograma_sine_sweep.png y convolucion_sweep_filtro_inverso.png) y sus correspondientes observaciones técnicas.
+
+**Qué aprendí:** Que las rutas en Markdown para GitHub deben usar siempre barras normales (/) para evitar enlaces rotos, y la importancia de mantener la trazabilidad de los criterios de aceptación en el README.md.
+
+**Verificación:** Commit en la rama docs/seccion-validacion y Pull Request creado en GitHub (Closes #15).
+
+---
+
+## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
+
+**Contexto:** Issue #7, implementación de generate_synthetic_ir en app/services/signal_utils.py.
+
+**Qué pregunté:** Cómo implementar la función de procesamiento generate_synthetic_ir para sintetizar una respuesta al impulso (RIR) por bandas de octava con decaimiento T60, respetando Type Hints completos y docstrings en formato NumPy.
+
+**Qué obtuve:** La función completa en app/services/signal_utils.py que genera ruido blanco, aplica filtrado pasa-banda por octavas con filtros Butterworth (scipy.signal.butter con output="sos"), aplica la envolvente de decaimiento exponencial por banda, suma las respuestas y normaliza al 90%.
+
+**Qué aprendí:** El diseño de envolventes de decaimiento energético exponencial por banda de octava, el uso de filtros SOS en SciPy y el formateo estricto con Ruff y Pytest.
+
+**Verificación:** Ejecución exitosa de los tests unitarios (test_synthetic_ir_duration y test_synthetic_ir_decay) en tests/test_procesamiento.py. Commit pusheado en la rama de trabajo.
+
+---
+
+## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
+
+**Contexto:** Issue #8, implementación de get_impulse_response en app/services/signal_utils.py.
+
+**Qué pregunté:** Cómo implementar get_impulse_response para extraer la respuesta al impulso sintética y real mediante deconvolución por FFT, incluyendo alineación y normalización.
+
+**Qué obtuve:** La función en app/services/signal_utils.py que realiza la deconvolución espectral (scipy.signal.fftconvolve) entre la grabación en recinto y el filtro inverso del Sine Sweep, alineando la señal desde el pico de máxima amplitud y normalizando al pico unitario (1.0).
+
+**Qué aprendí:** La técnica de deconvolución en el dominio frecuencial para la recuperación de la RIR y la importancia de la alineación temporal de la señal resultante.
+
+**Verificación:** Tests de deconvolución pasando en tests/test_procesamiento.py. Cambios commiteados y subidos a la rama correspondiente.
