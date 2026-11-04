@@ -6,6 +6,7 @@ Milestone 2: Procesamiento de la respuesta al impulso.
 from pathlib import Path
 
 import numpy as np
+import scipy.signal as sps
 
 
 def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
@@ -37,10 +38,6 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
         (con un mensaje claro que indique el archivo y el motivo).
     """
     raise NotImplementedError("Implementar en Milestone 2")
-
-
-import numpy as np
-import scipy.signal as sps
 
 
 def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: int) -> np.ndarray:
