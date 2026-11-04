@@ -257,6 +257,32 @@ A continuacion se presenta la evidencia gráfica de validación de las señales 
 ![Convolución Sweep e Inverso](docs/m1/convolucion_sweep_filtro_inverso.png)
 * **Línea de lectura:** Muestra el resultado de convolucionar el Sine Sweep con su filtro inverso. La señal se comprime en un **único impulso simétrico (función delta)**, validando que el filtro inverso cancela la modulación del sweep.
 
+## Prueba real de `play_and_record`
+
+Prueba de funcionamiento con `prueba_play_and_record.py` (sweep de 5 s, grabacion de 7 s):
+
+| Parametro | Valor |
+|---|---|
+| Interfaz | Behringer UMC22 (USB Audio CODEC), entrada 1 y salida 13 |
+| API de audio | MME (Windows) |
+| Fuente | Auricular conectado a la salida PHONES de la UMC22 (canal izquierdo) |
+| Microfono | Audio-Technica AT2020 (phantom +48 V) |
+| Canales | 1 reproducido, 1 grabado (mono) |
+| fs | 48000 Hz |
+| Buffer | automatico (blocksize 0 de sounddevice) |
+| Latencia | 180 ms entrada / 180 ms salida |
+| Pico de la grabacion | -16,9 dBFS |
+
+La grabacion tuvo las 336000 muestras esperadas y la respuesta al impulso se obtuvo con
+`get_impulse_response`, que recorta desde el pico y descarta la latencia del sistema.
+Es una prueba de la cadena reproduccion-grabacion: con el auricular pegado al microfono
+domina el sonido directo, asi que no es una medicion de la sala (para eso hace falta un
+parlante y un microfono de medicion omnidireccional).
+Observaciones: los graves llegan atenuados (un auricular sin sellar casi no reproduce
+bajas frecuencias), se registra ruido de fondo del cooler de la PC, y el auricular
+sostenido a mano introduce variaciones en el tiempo (el sistema deja de ser estrictamente
+invariante). Para una medicion real, fuente y microfono van fijos en soportes.
+
 ### M2 · Procesamiento de la RI (`v0.2.0`)
 
 - [ ] `load_audio()`, `generate_synthetic_ir()`, `get_impulse_response()` y
