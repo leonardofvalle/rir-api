@@ -223,40 +223,6 @@ service correspondiente → el resultado vuelve al cliente como WAV o JSON.
 
 ---
 
-## Ejemplos de uso (`curl`)
-
-### 1. Generar Ruido Rosa (POST)
-```bash
-curl -X POST "http://localhost:8000/api/v1/signals/pink-noise" \
-     -H "Content-Type: application/json" \
-     -d '{"duration": 5.0, "fs": 44100, "amplitude": 0.5}' \
-     --output ruido_rosa.wav
-
-### 2. Generar Sine Sweep y Filtro Inverso (POST)
-```bash
-curl -X POST "http://localhost:8000/api/v1/signals/sine-sweep" \
-     -H "Content-Type: application/json" \
-     -d '{"f1": 20.0, "f2": 20000.0, "duration": 10.0, "fs": 44100}' \
-     --output sine_sweep.wav
-
----
-
-## Validacion M1
-
-A continuacion se presenta la evidencia gráfica de validación de las señales generadas para el **Milestone 1** (disponibles en `docs/m1/`):
-
-### 1. Espectro del Ruido Rosa
-![Espectro del Ruido Rosa](docs/m1/espectro_ruido_rosa.png)
-* **Linea de lectura:** Muestra la densidad espectral de potencia del ruido rosa. Se verifica un decaimiento espectral con una pendiente de −2,97 dB/octava (muy cercano a los −3 dB/oct teóricos), confirmando el filtrado correcto proporcional a $1/\sqrt{f}$.
-
-### 2. Espectrograma del Sine Sweep Exponencial
-![Espectrograma Sine Sweep](docs/m1/espectrograma_sine_sweep.png)
-* **Linea de lectura:** Ilustra la evolucion temporal de la frecuencia instantanea del Sine Sweep (de 20 Hz a 20kHz en escala logaritmica), comprobando la continuidad de fase y la ausencia de saltos espectrales.
-
-### 3. Convolución Sweep con Filtro Inverso
-![Convolución Sweep e Inverso](docs/m1/convolucion_sweep_filtro_inverso.png)
-* **Línea de lectura:** Muestra el resultado de convolucionar el Sine Sweep con su filtro inverso. La señal se comprime en un **único impulso simétrico (función delta)**, validando que el filtro inverso cancela la modulación del sweep.
-
 ## Prueba real de `play_and_record`
 
 Prueba de funcionamiento con `prueba_play_and_record.py` (sweep de 5 s, grabacion de 7 s):
@@ -379,7 +345,7 @@ Las imágenes de validación se encuentran almacenadas en la carpeta `docs/m1/`:
 ```bash 
 curl -X POST "http://localhost:8000/api/v1/signals/pink-noise" \
      -H "Content-Type: application/json" \
-     -d '{"duration": 5.0, "sample_rate": 44100}' \ 
+     -d '{"duration": 5.0, "sample_rate": 44100}' \
      --output ruido_rosa.wav
 ```
 
