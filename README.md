@@ -344,6 +344,61 @@ El CI (`.github/workflows/ci.yml`) corre `ruff check`, `ruff format --check` y
 sobreescribir con variables de entorno con prefijo `RIR_` (por ejemplo `RIR_FS_DEFAULT=44100`)
 o con un archivo `.env` en la raiz (ignorado por git).
 
+## Validación y Evidencia Gráfica
+
+A continuación se presenta la evidencia experimental de la validación del sistema respecto a mediciones de referencia.
+
+---
+
+### Milestone 1: Generación de Señales 
+
+Las imágenes de validación se encuentran almacenadas en la carpeta `docs/m1/`:
+
+
+#### 1 Espectro del Ruido Rosa 
+![Espectro del Ruido Rosa](docs/m1/espectro_ruido_rosa.png) 
+* **Análisis:** Muestra la densidad espectral de potencia (PSD) del ruido rosa obtenida mediante el método de Welch. Se verifica una pendiente de decaimiento aproximada de **-3 dB/octava** (proporcional a $1/f$), garantizando energía constante por banda de octava.
+
+#### 2.Espectrograma del Sine Sweep Logarítmico 
+![Espectrograma Sine Sweep](docs/m1/espectrograma_sine_sweep.png) 
+* **Análisis:** Ilustra la evolución temporal de la frecuencia instantánea del sweep desde 20 Hz hasta 20 kHz. Se confirma una trayectoria logarítmica lineal (mismo tiempo por octava) sin saltos de fase.
+
+#### 3. Convolución Sweep × Filtro Inverso (Impulso Delta) 
+![Convolución Sweep e Inverso](docs/m1/convolucion_sweep_filtro_inverso.png) 
+* **Análisis:** Resultado de la convolución entre el Sine Sweep y su filtro inverso modulado ($A(t)$ a -6 dB/octava). La señal se comprime en un único impulso simétrico con una relación pico/resto cercana a los **50 dB**, validando el proceso de deconvolución.
+
+###  Milestone 2: Procesamiento de la Respuesta al Impulso
+
+* **Síntesis y Deconvolución de RIR:** Obtención de la respuesta al impulso sintética y real mediante deconvolución por FFT (`scipy.signal.fftconvolve`) entre la grabación en recinto y el filtro inverso del sweep, recortando desde el pico de máxima amplitud y normalizando al pico unitario.
+
+---
+
+### Pruebas de Endpoints HTTP (Ejemplos `curl`)
+
+#### Generar Ruido Rosa (`POST /api/v1/signals/pink-noise`)
+```bash 
+curl -X POST "http://localhost:8000/api/v1/signals/pink-noise" \
+     -H "Content-Type: application/json" \
+     -d '{"duration": 5.0, "sample_rate": 44100}' \ 
+     --output ruido_rosa.wav
+```
+
+
+#### Generar Sine Sweep y Filtro Inverso (`POST /api/v1/signals/sine-sweep`) 
+```bash
+# Sine Sweep
+curl -X POST "http://localhost:8000/api/v1/signals/sine-sweep" \
+     -H "Content-Type: application/json" \
+     -d '{"duration": 5.0, "start_freq": 20.0, "end_freq": 20000.0, "inverse": false}' \
+     --output sine_sweep.wav
+
+# Filtro Inverso
+curl -X POST "http://localhost:8000/api/v1/signals/sine-sweep" \
+     -H "Content-Type: application/json" \
+     -d '{"duration": 5.0, "start_freq": 20.0, "end_freq": 20000.0, "inverse": true}' \
+     --output filtro_inverso.wav
+```
+
 ## Referencias
 
 - ISO 3382-1:2009 — Acoustics — Measurement of room acoustic parameters.
