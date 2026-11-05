@@ -196,14 +196,50 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 ## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
 
 **Contexto:** Documentación y evidencia de validación del Milestone 1 (`README.md`). 
+
 **Qué pregunté:** Cómo redactar los ejemplos de comandos `curl` para los endpoints de M1 (`pink-noise` y `sine-sweep`) y cómo estructurar la sección de validación incluyendo las 3 imágenes de evidencia en el `README.md`. 
+
 **Qué obtuve:** La estructura de los comandos `curl`, la sintaxis de rutas relativas para las imágenes en `docs/m1/` (`espectro_ruido_rosa.png`, `espectrograma_sine_sweep.png` y `convolucion_sweep_filtro_inverso.png`) y sus correspondientes observaciones técnicas. 
+
 **Qué aprendí:** Que las rutas en Markdown para GitHub deben usar siempre barras normales (`/`) en lugar de barras invertidas (`\`) para evitar enlaces rotos, y la importancia de mantener la trazabilidad de los criterios de aceptación en el `README.md`. 
+
 **Verificación:** Commit `c1e18a9` enviado en la rama `docs/seccion-validacion` y Pull Request creado en GitHub.
 
 ---
 
 ## 2026-11-04 · Marcelo · Gemini (Gemini Notebook) 
-**Contexto:** Milestone 2, implementación de `generate_synthetic_ir` en `app/services/signal_utils.py`. **Qué pregunté:** Cómo implementar `generate_synthetic_ir` respetando la firma del proyecto (síntesis por bandas de octava con decaimiento $T_{60}$), Type Hints completos y docstring formato NumPy. 
-**Qué obtuve:** La función completa en `app/services/signal_utils.py` que genera ruido blanco, lo filtra por cada banda de octava con filtros Butterworth pasa-banda, le aplica la envolvente exponencial $e^{-\alpha t}$ con $\alpha = \frac{3 \ln(10)}{T_{60}}$, suma las bandas y normaliza el resultado al 90%. **Qué aprendí:** Cómo funciona el filtrado por bandas de octava con `scipy.signal.butter` (`output="sos"`), el cálculo matemático de la tasa de decaimiento exponencial según el tiempo $T_{60}$, y el formateo estricto con Ruff. 
+
+**Contexto:** Milestone 2, implementación de `generate_synthetic_ir` en `app/services/signal_utils.py`. 
+
+**Qué pregunté:** Cómo implementar `generate_synthetic_ir` respetando la firma del proyecto (síntesis por bandas de octava con decaimiento $T_{60}$), Type Hints completos y docstring formato NumPy. 
+
+**Qué obtuve:** La función completa en `app/services/signal_utils.py` que genera ruido blanco, lo filtra por cada banda de octava con filtros Butterworth pasa-banda, le aplica la envolvente exponencial $e^{-\alpha t}$ con $\alpha = \frac{3 \ln(10)}{T_{60}}$, suma las bandas y normaliza el resultado al 90%. 
+
+**Qué aprendí:** Cómo funciona el filtrado por bandas de octava con `scipy.signal.butter` (`output="sos"`), el cálculo matemático de la tasa de decaimiento exponencial según el tiempo $T_{60}$, y el formateo estricto con Ruff. 
+
 **Verificación:** Ejecución de `pytest -v tests/test_procesamiento.py` con los tests `test_synthetic_ir_duration` y `test_synthetic_ir_decay` pasando exitosamente. Commit `92481d9` pusheado en `feature/synthetic-ir`.
+
+---
+
+## 2026-11-04 · Leonardo Valle · Claude (claude.ai)
+
+**Contexto:** Issue #10, endpoints de M2 (synthetic-ir y single-band).
+
+**Qué pregunté:** Cómo implementar los endpoints de M2 a partir de los tests de
+`tests/test_api.py` y de los services de mis compañeros, y una revisión de los PRs
+de M2 antes de aprobarlos.
+
+**Qué obtuve:** El schema `SyntheticIRRequest`, el endpoint `/signals/synthetic-ir`,
+el router nuevo `filters.py` con `/filters/single-band` y su registro en `main.py`.
+
+**Qué aprendí:** Que un endpoint que recibe un archivo usa `File` y `Form` en lugar de
+un schema JSON; que el `ValueError` de `load_audio` hay que convertirlo en un error
+HTTP 422; y que una banda cuyo corte superior (fc·√2) supera Nyquist no se puede filtrar.
+
+**Error / limitación:** En la revisión apareció una tabla de validación contra REW con
+valores inventados (generados por IA, sin medición real). No la incorporamos: esa
+validación corresponde a M3 y tiene que salir de mediciones reales.
+
+**Verificación:** Los tres tests de M2 de `test_api.py` y los 14 de `test_procesamiento.py`
+pasan sin marcas xfail; probé también los casos de error (T60 negativo, banda arriba de
+Nyquist, archivo inválido), que responden 422.
