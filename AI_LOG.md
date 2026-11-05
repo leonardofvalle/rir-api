@@ -130,7 +130,7 @@ pedí completarla; agregué también la etiqueta del error 422 y la dependencia 
 
 ## 2026-10-27 · Matías Archelli · Microsoft Copilot
 
-**Contexto:** Issue #1 - Implementar generate_pink_noise
+**Contexto:** Issue #1 - Implementar `generate_pink_noise`
 
 **Qué pregunté:** Cómo aplicar un filtro a un ruido blanco para generar un ruido rosa
 
@@ -144,7 +144,7 @@ pedí completarla; agregué también la etiqueta del error 422 y la dependencia 
 
 ## 2026-10-27 · Matías Archelli · Microsoft Copilot
 
-**Contexto:** Issue #1 - Implementar generate_pink_noise
+**Contexto:** Issue #1 - Implementar `generate_pink_noise`
 
 **Qué pregunté:** El código realizado es correcto para generar ruido rosa
 
@@ -152,7 +152,7 @@ pedí completarla; agregué también la etiqueta del error 422 y la dependencia 
 
 **Qué aprendí:** Aprendí una nueva técnica para evitar inconvenientes con la frecuencia de 0 Hz. Se genera un array de ceros del tamaño de la muestra para luego realizar un slicing de [1:] (dejando el primer valor como 0) de forma que no se realiza una division por 0 al realizar el filtro y luego solo se realiza una multiplicación por 0 cuando se aplica el filtro al espectro de ruido blanco.
 
-**Verificación:** Pasó los tests para la funcion generate_pink_noise de tests/generacion.py (XPASS)
+**Verificación:** Pasó los tests para la funcion `generate_pink_noise` de `tests/generacion.py` (XPASS)
 
 ---
 
@@ -195,6 +195,7 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 
 ## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
 
+
 **Contexto:** Issue #15, documentación y evidencia de validación en README.md.
 
 **Qué pregunté:** Cómo redactar los ejemplos de comandos curl para los endpoints de M1 (pink-noise y sine-sweep) y cómo estructurar la sección de validación incluyendo las 3 imágenes de evidencia en el README.md.
@@ -232,3 +233,31 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 **Qué aprendí:** La técnica de deconvolución en el dominio frecuencial para la recuperación de la RIR y la importancia de la alineación temporal de la señal resultante.
 
 **Verificación:** Tests de deconvolución pasando en tests/test_procesamiento.py. Cambios commiteados y subidos a la rama correspondiente.
+
+
+
+---
+
+## 2026-11-04 · Leonardo Valle · Claude (claude.ai)
+
+**Contexto:** Issue #10, endpoints de M2 (synthetic-ir y single-band).
+
+**Qué pregunté:** Cómo implementar los endpoints de M2 a partir de los tests de
+`tests/test_api.py` y de los services de mis compañeros, y una revisión de los PRs
+de M2 antes de aprobarlos.
+
+**Qué obtuve:** El schema `SyntheticIRRequest`, el endpoint `/signals/synthetic-ir`,
+el router nuevo `filters.py` con `/filters/single-band` y su registro en `main.py`.
+
+**Qué aprendí:** Que un endpoint que recibe un archivo usa `File` y `Form` en lugar de
+un schema JSON; que el `ValueError` de `load_audio` hay que convertirlo en un error
+HTTP 422; y que una banda cuyo corte superior (fc·√2) supera Nyquist no se puede filtrar.
+
+**Error / limitación:** En la revisión apareció una tabla de validación contra REW con
+valores inventados (generados por IA, sin medición real). No la incorporamos: esa
+validación corresponde a M3 y tiene que salir de mediciones reales.
+
+**Verificación:** Los tres tests de M2 de `test_api.py` y los 14 de `test_procesamiento.py`
+pasan sin marcas xfail; probé también los casos de error (T60 negativo, banda arriba de
+Nyquist, archivo inválido), que responden 422.
+

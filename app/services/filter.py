@@ -37,4 +37,20 @@ def filter_single_band(
     np.ndarray
         Senal filtrada (array 1D, misma longitud que ``signal``).
     """
-    raise NotImplementedError("Implementar en Milestone 2")
+    import scipy.signal
+
+    # Frecuencia de corte inferior
+    lower_freq = center_freq / np.sqrt(2)
+
+    # Frecuencia de corte superior
+    upper_freq = center_freq * np.sqrt(2)
+
+    # Filtro Butterworth
+    butterworth = scipy.signal.butter(
+        order, [lower_freq, upper_freq], btype="bandpass", fs=fs, output="sos"
+    )
+
+    # Filtro aplicado a la señal
+    filtered_signal = scipy.signal.sosfiltfilt(butterworth, signal)
+
+    return filtered_signal

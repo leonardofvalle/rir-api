@@ -13,18 +13,14 @@ def generate_pink_noise(duration: float, fs: int) -> np.ndarray:
     proporcional a la frecuencia (1/f): cae -3 dB/octava, de modo que cada
     octava contiene la misma energia. Por eso es util para mediciones acusticas.
 
-    Algoritmo recomendado: **Voss-McCartney**.
-
-    1. Definir ``N_bits`` generadores de ruido blanco (tipicamente 16-20).
-    2. Para cada muestra ``n``, actualizar el generador ``i`` cuando el bit ``i``
-       de ``n`` cambia respecto de ``n - 1`` (el generador ``i`` se actualiza
-       cada ``2**i`` muestras).
-    3. Sumar las salidas de todos los generadores.
-    4. Normalizar la senal resultante al rango [-1, 1].
-
-    Alternativa aceptable: generar ruido blanco y filtrarlo en frecuencia con
-    ``H(f) = 1/sqrt(f)`` (``np.fft.rfft`` -> dividir por ``sqrt(f)`` omitiendo
-    ``f = 0`` -> ``np.fft.irfft`` -> normalizar).
+    1. Se genera un ruido blaco con ``np.random.randn``,
+    2. Se pasa el ruido generado al dominio de la frecuencia con ``np.fft.rfft``,
+    3. Se debe crear el filtro ``H(f) = 1/sqrt(f)``
+        3.1. Para evitar la división por cero se genera previamente un array de ceros
+        3.2. Se reemplaza a partir de la segunda posición con el filtro dividiendo por ``sqrt(f)``
+    4. Se aplica el filtro al espectro de ruido blanco
+    5. Se retorna al dominio del tiempo con ``np.fft.irfft``
+    6. Se normaliza el ruido rosa entre -1 y 1
 
     Parameters
     ----------
@@ -41,29 +37,33 @@ def generate_pink_noise(duration: float, fs: int) -> np.ndarray:
 
     References
     ----------
-    .. [1] Voss, R. F. & Clarke, J. (1978). "1/f noise" in music: Music from
-       1/f noise. JASA 63(1), 258-263.
-    .. [2] https://www.firstpr.com.au/dsp/pink-noise/
+    .. [1] https://www.firstpr.com.au/dsp/pink-noise/
     """
-    n = int(duration * fs)  # Número de muestras
+    # Número de muestras
+    n = int(duration * fs)
 
-    white_noise = np.random.randn(n)  # Generación de ruido blanco
+    # Generación de ruido blanco
+    white_noise = np.random.randn(n)
 
-    fft = np.fft.rfft(white_noise)  # Transformada rápida de Fourier
-    # para pasar al dominio de la frecuencia
+    # Transformada rápida de Fourier para pasar al dominio de la frecuencia
+    fft = np.fft.rfft(white_noise)
 
-    freqs = np.fft.rfftfreq(n, d=1 / fs)  # Frecuencias correspondientes
+    # Frecuencias correspondientes
+    freqs = np.fft.rfftfreq(n, d=1 / fs)
 
-    z = np.zeros_like(fft)  # Para evitar la división por cero se genera un array de ceros del mismo
-    # tamaño que el espectro de ruido blanco
+    # Se genera un array de ceros del tamaño que el espectro de ruido blanco
+    z = np.zeros_like(fft)
 
-    z[1:] = 1 / np.sqrt(freqs[1:])  # Se aplica el filtro 1/sqrt(f) en todas las posiciones menos
-    # la primera, que se deja en cero para evitar la división por cero
+    # Se aplica el filtro 1/sqrt(f) en todas las posiciones dejando en cero la primera
+    z[1:] = 1 / np.sqrt(freqs[1:])
 
-    filt = fft * z  # Se aplica el filtro al espectro de ruido blanco
+    # Se aplica el filtro al espectro de ruido blanco
+    filt = fft * z
 
-    ifft = np.fft.irfft(filt, n=n)  # Transformada rápida de Fourier inversa
+    # Transformada rápida de Fourier inversa
+    ifft = np.fft.irfft(filt, n=n)
 
-    pink_noise: np.ndarray = ifft / np.max(np.abs(ifft))  # Ruido rosa normalizado entre -1 y 1
+    # Ruido rosa normalizado entre -1 y 1
+    pink_noise: np.ndarray = ifft / np.max(np.abs(ifft))
 
     return pink_noise
