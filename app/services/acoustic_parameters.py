@@ -66,14 +66,39 @@ def apply_smoothing(
         Si ``method`` no es ``'hilbert'`` ni ``'moving_average'``, o si
         ``window_ms`` no es positivo.
     """
-    raise NotImplementedError("Implementar en Milestone 3")
+
+    if method not in ["hilbert", "moving_average"]:
+        raise ValueError("Metodo invalido. Debe usar 'hilbert' o 'moving_average'")
+
+    if window_ms <= 0:
+        raise ValueError("El largo de la ventana debe ser positivo")
+
+    if method == "hilbert":
+        from scipy.signal import hilbert
+
+        # Envolvente de Hilbert
+        envelope = np.abs(hilbert(signal))
+
+    elif method == "moving_average":
+        # Convertir milisegundos a cantidad de muestras
+        window_samples = max(1, int(window_ms * fs / 1000))
+
+        # Ventana de media movil promediada
+        window = np.ones(window_samples) / window_samples
+
+        # Calcular la media movil del cuadrado de la senal al cuadrado
+        mean_squared = np.convolve(signal**2, window, mode="same")
+
+        # Envolvente RMS
+        envelope = np.sqrt(mean_squared)
+
+    return envelope
 
 
 def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
     """Calcula la integral de Schroeder (Energy Decay Curve) en dB.
 
-    ``E[n] = sum_{k=n}^{N-1} h[k]**2`` (integracion inversa, por ejemplo con
-    ``np.cumsum`` sobre la senal invertida) y ``L[n] = 10*log10(E[n] / E[0])``.
+    ``E[n] = sum_{k=n}^{N-1} h[k]**2`` y ``L[n] = 10*log10(E[n] / E[0])``.
 
     Parameters
     ----------
@@ -91,7 +116,17 @@ def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
     .. [1] Schroeder, M. R. (1965). "New method of measuring reverberation
        time." JASA 37(3), 409-412.
     """
-    raise NotImplementedError("Implementar en Milestone 3")
+
+    # Calculo de la integral de Schroeder
+    schroeder = np.cumsum(ir[::-1] ** 2)[::-1]
+
+    # Evitar logaritmo de cero
+    schroeder = np.maximum(schroeder, np.finfo(float).eps)
+
+    # Curva de decaimiento normalizada a 0 dB
+    schroeder_db = 10 * np.log10(schroeder / schroeder[0])
+
+    return schroeder_db
 
 
 def linear_regression(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float]:
@@ -116,7 +151,22 @@ def linear_regression(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float
     r2 : float
         Coeficiente de determinacion R^2.
     """
-    raise NotImplementedError("Implementar en Milestone 3")
+
+    x_mean = np.mean(x)
+    y_mean = np.mean(y)
+
+    numerator = np.sum((x - x_mean) * (y - y_mean))
+    denominator = np.sum((x - x_mean) ** 2)
+
+    slope = numerator / denominator
+    intercept = y_mean - slope * x_mean
+
+    ss_total = np.sum((y - y_mean) ** 2)
+    ss_residual = np.sum((y - (slope * x + intercept)) ** 2)
+
+    r2 = 1 - (ss_residual / ss_total)
+
+    return slope, intercept, r2
 
 
 def calculate_parameters_from_ir(ir: np.ndarray, fs: int) -> dict[str, dict[float, float | None]]:
