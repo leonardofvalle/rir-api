@@ -128,9 +128,8 @@ flowchart TB
 
         subgraph S["schemas/ (Pydantic)"]
             Ss["signals.py<br/>parametros de pink-noise y sine-sweep (M1)<br/>y de synthetic-ir (M2)"]
-            Sf["filters.py<br/>parametros de single-band (M2)"]
-            Sa["acoustics.py<br/>request y respuesta de parameters (M3)"]
-            Su["utils.py<br/>parametros de schroeder y smoothing (M3)"]
+            Sa["responses.py<br/>BandAnalysisResponse: respuesta de parameters (M3)"]
+            Su["utils.py<br/>SmoothingMethod · SmoothingResponse<br/>SchroederResponse (M3)"]
         end
 
         subgraph SV["services/"]
