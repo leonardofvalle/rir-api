@@ -27,14 +27,12 @@ def test_fs_sin_bandas_da_error():
         calculate_parameters_from_ir(np.ones(100), 200)
 
 
-@pytest.mark.xfail(raises=NotImplementedError, strict=False, reason="falta Schroeder (M3)")
 def test_bandas_por_encima_de_nyquist_se_omiten():
     """Con fs = 8000 Hz la banda de 4 kHz queda afuera (su corte es 5657 Hz)."""
     params = calculate_parameters_from_ir(_ir_con_ruido(0.5, 8000, 1.0, -80), 8000)
     assert sorted(params["T30"]) == [125.0, 250.0, 500.0, 1000.0, 2000.0]
 
 
-@pytest.mark.xfail(raises=NotImplementedError, strict=False, reason="falta Schroeder (M3)")
 def test_poco_rango_dinamico_devuelve_none():
     """Con el ruido a -30 dB no hay rango para T20 ni T30, pero si para EDT."""
     params = calculate_parameters_from_ir(_ir_con_ruido(1.2, 48000, 2.5, -30), 48000)
@@ -43,7 +41,6 @@ def test_poco_rango_dinamico_devuelve_none():
     assert all(v is not None for v in params["EDT"].values())
 
 
-@pytest.mark.xfail(raises=NotImplementedError, strict=False, reason="falta Schroeder (M3)")
 def test_ruido_moderado_no_infla_t30():
     """Con el ruido a -60 dB, T30 sigue dentro de +-10 % del T60 real."""
     t60 = 1.2
