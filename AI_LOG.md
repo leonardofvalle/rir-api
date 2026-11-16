@@ -266,7 +266,7 @@ Nyquist, archivo inválido), que responden 422.
 
 ## 2026-11-16 · Chelo · Gemini Notebook
 
-**Contexto:** Finalización y validación experimental de Milestone 2 (M2).
+**Contexto:** Finalización, refactorización y validación experimental de Milestone 2 (M2).
 
 **Qué pregunté:** Cómo refactorizar el generador sintético de RIs, ejecutar las pruebas de procesamiento y automatizar la generación de evidencias gráficas y reportes para M2.
 
