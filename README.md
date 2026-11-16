@@ -338,7 +338,30 @@ Las imágenes de validación se encuentran almacenadas en la carpeta `docs/m1/`:
 
 * **Síntesis y Deconvolución de RIR:** Obtención de la respuesta al impulso sintética y real mediante deconvolución por FFT (`scipy.signal.fftconvolve`) entre la grabación en recinto y el filtro inverso del sweep, recortando desde el pico de máxima amplitud y normalizando al pico unitario.
 
----
+### Milestone 3: Parámetros Acústicos (ISO 3382-1) y Validación contra REW
+
+#### Origen de las Respuestas al Impulso (RI)
+* **RI Sintética:** Generada con tiempos de reverberación conocidos ($T_{60}$ objetivo por banda: 125 Hz: 1.8 s · 250 Hz: 1.6 s · 500 Hz: 1.4 s · 1 kHz: 1.2 s · 2 kHz: 1.0 s · 4 kHz: 0.8 s).
+* **RI Real:** Medición real en recinto acústico (Gimnasio, archivo `h026_Gym_8txts.wav`) obtenida del *MIT Acoustic Impulse Response Survey*.
+
+#### 1. Curva de Integración Inversa de Schroeder y Regresiones
+![Schroeder y Regresiones](docs/m3/schroeder_regresiones.png)
+* **Análisis:** Muestra la curva de decaimiento acumulado de Schroeder junto con los ajustes por mínimos cuadrados para el cálculo de $EDT$ (-0 a -10 dB), $T_{20}$ (-5 a -25 dB) y $T_{30}$ (-5 a -35 dB), garantizando la extrapolación a 60 dB según la norma ISO 3382-1.
+
+#### 2. Decaimiento Schroeder Filtrado por Bandas de Octava
+![Filtros por Octava](docs/m3/filtros_octava.png)
+* **Análisis:** Ilustra las curvas de decaimiento separadas por bandas de octava (125 Hz a 4 kHz). Permite evaluar la dependencia frecuencial del tiempo de reverberación en recintos reales y sintéticos.
+
+#### 3. Validación de $T_{30}$ contra REW (Room EQ Wizard)
+![Validación contra REW](docs/m3/validacion_rew.png)
+* **Análisis:** Comparación directa entre los valores de $T_{30}$ calculados por la API y los medidos independientemente en REW. La franja sombreada indica la tolerancia aceptada del $\pm 10\%$.
+
+#### Análisis de Resultados y Comparación con REW
+* **Concordancia General:** Los parámetros calculados por la API presentan una alta coincidencia con las mediciones obtenidas en REW, manteniéndose ampliamente dentro de los rangos de tolerancia ($\pm 10\%$ para tiempos de reverberación y $\pm 1\text{ dB}$ para la claridad $C_{80}$).
+* **Comportamiento en Altas Frecuencias (4 kHz):** Se observan leves variaciones en la estimación del $EDT$ a 4 kHz debido a la mayor atenuación del sonido directo y la presencia de reflexiones tempranas de alta densidad.
+* **Diagrama de Arquitectura:** El flujo de procesamiento se encuentra documentado e integrado en la sección de [Arquitectura del Sistema](#arquitectura-del-sistema).
+
+*La tabla completa de validación numérica se encuentra generada en [docs/m3/tabla_validacion.md](docs/m3/tabla_validacion.md).*
 
 ### Pruebas de Endpoints HTTP (Ejemplos `curl`)
 
