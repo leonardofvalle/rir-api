@@ -238,6 +238,7 @@ Prueba de funcionamiento con `prueba_play_and_record.py` (sweep de 5 s, grabacio
 | Buffer | automatico (blocksize 0 de sounddevice) |
 | Latencia | 180 ms entrada / 180 ms salida |
 | Pico de la grabacion | -16,9 dBFS |
+![Prueba real de play_and_record](docs/m1/prueba_real_play_and_record.png)
 
 La grabacion tuvo las 336000 muestras esperadas y la respuesta al impulso se obtuvo con
 `get_impulse_response`, que recorta desde el pico y descarta la latencia del sistema.
