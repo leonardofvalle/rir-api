@@ -33,7 +33,7 @@ ax2.plot(t_ri, ri_db, linewidth=0.6)
 ax2.set_title("Respuesta al impulso obtenida con get_impulse_response")
 ax2.set_xlabel("Tiempo [ms]")
 ax2.set_ylabel("Nivel [dB, 0 dB = pico]")
-ax2.set_xlim(0, 300)
+ax2.set_xlim(0, 100)
 ax2.set_ylim(-80, 5)
 ax2.grid(True, alpha=0.3)
 
