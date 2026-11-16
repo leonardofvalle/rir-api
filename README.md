@@ -312,9 +312,10 @@ o con un archivo `.env` en la raiz (ignorado por git).
 
 ## Validación y Evidencia Gráfica
 
-A continuación se presenta la evidencia experimental de la validación del sistema respecto a mediciones de referencia.
+## Milestone 2 
 
----
+La validación de M2 está en [docs/m2/README.md](docs/m2/README.md).
+
 
 ### Milestone 1: Generación de Señales 
 
