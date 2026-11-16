@@ -1,21 +1,12 @@
-"""Tests para los servicios de analisis de parametros acusticos (Milestone 3).
-
-Mientras las funciones lancen ``NotImplementedError`` estos tests quedan como
-``xfail`` (no ponen el CI en rojo).
-"""
+"""Tests para los servicios de analisis de parametros acusticos (Milestone 3)."""
 
 import numpy as np
-import pytest
 
 from app.services.acoustic_parameters import (
     apply_schroeder_integral,
     apply_smoothing,
     calculate_parameters_from_ir,
     linear_regression,
-)
-
-pytestmark = pytest.mark.xfail(
-    raises=NotImplementedError, strict=False, reason="se implementa en M3"
 )
 
 
