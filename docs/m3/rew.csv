@@ -17,12 +17,12 @@ sintetica,T30,500,1.433
 sintetica,T30,1000,1.217
 sintetica,T30,2000,1.027
 sintetica,T30,4000,0.826
-sintetica,C80,125,644
-sintetica,C80,250,-477
-sintetica,C80,500,1.75
-sintetica,C80,1000,2.34
+sintetica,C80,125,-2.06
+sintetica,C80,250,0.06
+sintetica,C80,500,0.33
+sintetica,C80,1000,1.91
 sintetica,C80,2000,3.74
-sintetica,C80,4000,3.03
+sintetica,C80,4000,3.67
 real,EDT,125,0.825
 real,EDT,250,0.983
 real,EDT,500,1.167

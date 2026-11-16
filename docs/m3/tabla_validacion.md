@@ -18,12 +18,12 @@
 | sintetica | T30 | 1000 | 1.21 s | 1.22 s | -0.01 s | ±0.12 s | sí |
 | sintetica | T30 | 2000 | 1.02 s | 1.03 s | -0.01 s | ±0.10 s | sí |
 | sintetica | T30 | 4000 | 0.81 s | 0.83 s | -0.02 s | ±0.08 s | sí |
-| sintetica | C80 | 125 | -2.24 dB | 644.00 dB | -646.24 dB | ±1.00 dB | no |
-| sintetica | C80 | 250 | 1.90 dB | -477.00 dB | +478.90 dB | ±1.00 dB | no |
-| sintetica | C80 | 500 | 1.04 dB | 1.75 dB | -0.71 dB | ±1.00 dB | sí |
-| sintetica | C80 | 1000 | 0.99 dB | 2.34 dB | -1.35 dB | ±1.00 dB | no |
+| sintetica | C80 | 125 | -2.24 dB | -2.06 dB | -0.18 dB | ±1.00 dB | sí |
+| sintetica | C80 | 250 | 1.90 dB | 0.06 dB | +1.84 dB | ±1.00 dB | no |
+| sintetica | C80 | 500 | 1.04 dB | 0.33 dB | +0.71 dB | ±1.00 dB | sí |
+| sintetica | C80 | 1000 | 0.99 dB | 1.91 dB | -0.92 dB | ±1.00 dB | sí |
 | sintetica | C80 | 2000 | 3.36 dB | 3.74 dB | -0.38 dB | ±1.00 dB | sí |
-| sintetica | C80 | 4000 | 4.16 dB | 3.03 dB | +1.13 dB | ±1.00 dB | no |
+| sintetica | C80 | 4000 | 4.16 dB | 3.67 dB | +0.49 dB | ±1.00 dB | sí |
 | real | EDT | 125 | 0.78 s | 0.82 s | -0.05 s | ±0.08 s | sí |
 | real | EDT | 250 | 0.99 s | 0.98 s | +0.01 s | ±0.10 s | sí |
 | real | EDT | 500 | 1.03 s | 1.17 s | -0.14 s | ±0.12 s | no |
