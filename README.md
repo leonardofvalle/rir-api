@@ -128,9 +128,8 @@ flowchart TB
 
         subgraph S["schemas/ (Pydantic)"]
             Ss["signals.py<br/>parametros de pink-noise y sine-sweep (M1)<br/>y de synthetic-ir (M2)"]
-            Sf["filters.py<br/>parametros de single-band (M2)"]
-            Sa["acoustics.py<br/>request y respuesta de parameters (M3)"]
-            Su["utils.py<br/>parametros de schroeder y smoothing (M3)"]
+            Sa["responses.py<br/>BandAnalysisResponse: respuesta de parameters (M3)"]
+            Su["utils.py<br/>SmoothingMethod · SmoothingResponse<br/>SchroederResponse (M3)"]
         end
 
         subgraph SV["services/"]
@@ -238,6 +237,7 @@ Prueba de funcionamiento con `prueba_play_and_record.py` (sweep de 5 s, grabacio
 | Buffer | automatico (blocksize 0 de sounddevice) |
 | Latencia | 180 ms entrada / 180 ms salida |
 | Pico de la grabacion | -16,9 dBFS |
+![Prueba real de play_and_record](docs/m1/prueba_real_play_and_record.png)
 
 La grabacion tuvo las 336000 muestras esperadas y la respuesta al impulso se obtuvo con
 `get_impulse_response`, que recorta desde el pico y descarta la latencia del sistema.
@@ -312,9 +312,10 @@ o con un archivo `.env` en la raiz (ignorado por git).
 
 ## Validación y Evidencia Gráfica
 
-A continuación se presenta la evidencia experimental de la validación del sistema respecto a mediciones de referencia.
+## Milestone 2 
 
----
+La validación de M2 está en [docs/m2/README.md](docs/m2/README.md).
+
 
 ### Milestone 1: Generación de Señales 
 
@@ -363,6 +364,57 @@ curl -X POST "http://localhost:8000/api/v1/signals/sine-sweep" \
      -H "Content-Type: application/json" \
      -d '{"duration": 5.0, "start_freq": 20.0, "end_freq": 20000.0, "inverse": true}' \
      --output filtro_inverso.wav
+```
+
+#### Generar una RI sintética para probar los endpoints de M3 (`POST /api/v1/signals/synthetic-ir`)
+```bash
+curl -X POST "http://localhost:8000/api/v1/signals/synthetic-ir" \
+     -H "Content-Type: application/json" \
+     -d '{"duration": 3.0, "sample_rate": 44100, "t60_values": {"125": 1.8, "250": 1.6, "500": 1.4, "1000": 1.2, "2000": 1.0, "4000": 0.8}}' \
+     --output ri.wav
+```
+
+#### Parámetros acústicos ISO 3382 por banda (`POST /api/v1/acoustics/parameters`)
+Devuelve EDT, T10, T20, T30, D50 y C80 por banda de octava. Un tiempo vale `null` si la banda no tiene rango dinámico suficiente para medirlo.
+```bash
+curl -X POST "http://localhost:8000/api/v1/acoustics/parameters" \
+     -F "file=@ri.wav"
+```
+Respuesta con la RI de arriba (recortada; T10 omitido). El T30 recupera los T60 pedidos con menos de 5 % de error:
+```json
+{
+  "sample_rate": 44100,
+  "duration": 3.0,
+  "center_frequencies": [125.0, 250.0, 500.0, 1000.0, 2000.0, 4000.0],
+  "parameters": {
+    "EDT": {"125.0": 1.92, "250.0": 1.32, "500.0": 1.44, "1000.0": 1.27, "2000.0": 0.92, "4000.0": 0.89},
+    "T20": {"125.0": 1.91, "250.0": 1.68, "500.0": 1.45, "1000.0": 1.18, "2000.0": 1.01, "4000.0": 0.78},
+    "T30": {"125.0": 1.87, "250.0": 1.65, "500.0": 1.44, "1000.0": 1.21, "2000.0": 1.02, "4000.0": 0.81},
+    "D50": {"125.0": 30.5, "250.0": 39.28, "500.0": 41.62, "1000.0": 43.53, "2000.0": 52.15, "4000.0": 54.58},
+    "C80": {"125.0": -2.24, "250.0": 1.9, "500.0": 1.04, "1000.0": 0.99, "2000.0": 3.36, "4000.0": 4.16}
+  }
+}
+```
+
+#### Curva de decaimiento de Schroeder (`POST /api/v1/utils/schroeder`)
+Devuelve la curva en dB, decimada a ~1000 puntos por segundo (`time_step` indica los segundos entre valores).
+```bash
+curl -X POST "http://localhost:8000/api/v1/utils/schroeder" \
+     -F "file=@ri.wav"
+```
+
+#### Envolvente suavizada (`POST /api/v1/utils/smoothing`)
+`method` puede ser `hilbert` (por defecto) o `moving_average`; `window_ms` (entre 0 y 100 ms) solo se usa con media móvil.
+```bash
+# Envolvente de Hilbert
+curl -X POST "http://localhost:8000/api/v1/utils/smoothing" \
+     -F "file=@ri.wav"
+
+# Media móvil de 10 ms
+curl -X POST "http://localhost:8000/api/v1/utils/smoothing" \
+     -F "file=@ri.wav" \
+     -F "method=moving_average" \
+     -F "window_ms=10"
 ```
 
 ## Referencias

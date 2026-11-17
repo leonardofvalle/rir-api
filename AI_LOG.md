@@ -239,6 +239,7 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 
 ---
 
+
 ## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
 
 **Contexto:** Issue #8, implementación de get_impulse_response en app/services/signal_utils.py.
@@ -319,3 +320,20 @@ Nyquist, archivo inválido), que responden 422.
 **Verificación:** Pasó los tests para la función `linear_regression` de `tests/test_analisis.py` (XPASS)
 
 ---
+## 2026-11-16 · Chelo · Gemini Notebook
+
+**Contexto:** Finalización, refactorización y validación experimental de Milestone 2 (M2).
+
+**Qué pregunté:** Cómo refactorizar el generador sintético de RIs, ejecutar las pruebas de procesamiento y automatizar la generación de evidencias gráficas y reportes para M2.
+
+**Qué obtuve:** El refactor de `generate_synthetic_ir` en `app/services/signal_utils.py` reutilizando `filter_single_band`, la verificación exitosa de pruebas unitarias (`pytest tests/test_procesamiento.py`), el script `generar_evidencias_m2.py` y el informe/gráficos en `docs/m2/`.
+
+**Qué aprendí:** Que la función `filter_single_band` recibe los parámetros en orden `(signal, fs, fc)`; que el método de deconvolución en frecuencia (`get_impulse_response`) alcanza una alta correlación de Pearson (>0.99) en la prueba de ida y vuelta sintética; y cómo calcular la integración de Schroeder por bandas de octava según IEC 61260.
+
+**Error / limitación:** Durante la corrida del script surgieron errores de importación (`OCTAVE_BANDS` y `generate_sine_sweep_pair`) y un `ValueError` en SciPy por inversión de parámetros (`fs` por `fc`), los cuales se solucionaron adaptando el script a la arquitectura real del proyecto.
+
+**Verificación:** Ejecución de `uv run python generar_evidencias_m2.py` completada al 100% (3/3 pasos), generación de la carpeta `docs/m2/` con los 4 gráficos (`.png`) y el `README.md`, y aprobación de las pruebas en Pytest.
+
+
+
+

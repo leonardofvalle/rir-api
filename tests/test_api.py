@@ -7,15 +7,11 @@ Cada milestone expone lo que construye:
 - M2: ``/api/v1/signals/synthetic-ir`` y ``/api/v1/filters/single-band``.
 - M3: ``/api/v1/acoustics/parameters``, ``/api/v1/utils/schroeder`` y ``/api/v1/utils/smoothing``.
 
-Mientras un endpoint no existe responde 404, por eso sus tests estan marcados
-``xfail`` sin ``raises``: fallan por assert, no por ``NotImplementedError``.
-Cuando lo implementen, borren la marca de ese test.
 """
 
 import io
 
 import numpy as np
-import pytest
 import soundfile as sf
 from fastapi.testclient import TestClient
 
@@ -23,10 +19,6 @@ from app.main import app
 from app.routers.audio_http import wav_response
 
 client = TestClient(app)
-
-xfail_m1 = pytest.mark.xfail(strict=False, reason="se implementa en M1")
-xfail_m2 = pytest.mark.xfail(strict=False, reason="se implementa en M2")
-xfail_m3 = pytest.mark.xfail(strict=False, reason="se implementa en M3")
 
 
 def _wav_en_memoria(signal: np.ndarray, fs: int) -> bytes:
@@ -155,7 +147,6 @@ def test_invalid_file_returns_422():
 # ── M3 ───────────────────────────────────────────────────────────────────────
 
 
-@xfail_m3
 def test_acoustics_parameters_endpoint():
     """Enviar una RI a /api/v1/acoustics/parameters devuelve los parametros por banda."""
     fs = 44100
@@ -165,7 +156,6 @@ def test_acoustics_parameters_endpoint():
     assert isinstance(response.json(), dict)
 
 
-@xfail_m3
 def test_utils_schroeder_endpoint():
     """/api/v1/utils/schroeder devuelve la curva de caida (en dB, decreciente)."""
     fs = 44100
@@ -175,7 +165,6 @@ def test_utils_schroeder_endpoint():
     assert isinstance(response.json(), dict)
 
 
-@xfail_m3
 def test_utils_smoothing_endpoint():
     """/api/v1/utils/smoothing devuelve la envolvente de la senal."""
     fs = 44100

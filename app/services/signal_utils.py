@@ -8,6 +8,8 @@ from pathlib import Path
 import numpy as np
 import scipy.signal as sps
 
+from app.services.filter import filter_single_band
+
 
 def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     """Carga un archivo de audio (al menos WAV y FLAC) y retorna senal y fs.
@@ -104,19 +106,8 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
         # 1. Ruido blanco por banda
         white_noise = rng.normal(0, 1, num_samples)
 
-        # 2. Filtrado pasa-banda por octava (f_low = fc / sqrt(2), f_high = fc * sqrt(2))
-        f_low = fc / np.sqrt(2)
-        f_high = fc * np.sqrt(2)
-
-        # Asegurar que las frecuencias no superen el límite de Nyquist
-        nyquist = fs / 2.0
-        if f_high >= nyquist:
-            f_high = nyquist * 0.99
-        if f_low <= 0:
-            f_low = 1.0
-
-        sos = sps.butter(N=4, Wn=[f_low, f_high], btype="bandpass", fs=fs, output="sos")
-        band_noise = sps.sosfilt(sos, white_noise)
+        # 2. Filtrado pasa-banda usando el filtro oficial de M2
+        band_noise = filter_single_band(white_noise, fs, fc)
 
         # 3. Envolvente de decaimiento exponencial
         alpha = (3.0 * np.log(10.0)) / t60
