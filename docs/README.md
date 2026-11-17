@@ -2,18 +2,27 @@
 
 ## Estructura
 
-Este directorio contiene la documentacion del proyecto. Se recomienda organizar los
-archivos de la siguiente manera:
-
 ```
-docs/
-├── README.md              # Este archivo
-├── teoria/                # Notas teoricas y referencias
-│   ├── iso_3382.md        # Resumen de la norma ISO 3382
-│   └── parametros.md      # Explicacion de EDT, T20, T30
-├── mediciones/            # Reportes de mediciones realizadas
-│   └── sala_ejemplo.md    # Informe de una medicion
-└── imagenes/              # Graficos y diagramas generados
+├── docs/
+│   ├── m1/                        # Gráficos de validación de M1
+│   │   ├── convolucion_sweep_filtro_inverso.png
+│   │   ├── espectro_ruido_rosa.png
+│   │   ├── espectrograma_sine_sweep.png
+│   │   └── prueba_real_play_and_record.png
+│   ├── m2/                        # Gráficos de validación de M2
+│   │   ├── README.md              # Resumen de la validación experimental
+│   │   ├── decaimiento_bandas_octava.png
+│   │   ├── ida_y_vuelta_sintetica_correlacion.png
+│   │   ├── rir_corta_analisis.png
+│   │   └── rir_larga_analisis.png
+│   ├── m3/                        # Gráficos de validación de M3
+│   │   ├── filtros_octava.png
+│   │   ├── schroeder_regresiones.png
+│   │   ├── validacion_rew.png
+│   │   ├── ri_real.wav
+│   │   ├── ri_sintetica.wav
+│   │   ├── rew.csv
+│   │   └── tabla_validacion.md
 ```
 
 ## API de referencia
