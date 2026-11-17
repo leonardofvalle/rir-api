@@ -195,7 +195,6 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 
 ## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
 
-
 **Contexto:** Issue #15, documentación y evidencia de validación en README.md.
 
 **Qué pregunté:** Cómo redactar los ejemplos de comandos curl para los endpoints de M1 (pink-noise y sine-sweep) y cómo estructurar la sección de validación incluyendo las 3 imágenes de evidencia en el README.md.
@@ -222,7 +221,6 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 
 ---
 
-
 ## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
 
 **Contexto:** Issue #8, implementación de get_impulse_response en app/services/signal_utils.py.
@@ -234,8 +232,6 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 **Qué aprendí:** La técnica de deconvolución en el dominio frecuencial para la recuperación de la RIR y la importancia de la alineación temporal de la señal resultante.
 
 **Verificación:** Tests de deconvolución pasando en tests/test_procesamiento.py. Cambios commiteados y subidos a la rama correspondiente.
-
-
 
 ---
 
