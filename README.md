@@ -67,9 +67,16 @@ rir-api/
 │   ├── routers/
 │   │   ├── __init__.py
 │   │   ├── health.py              # GET /health (M0)
-│   │   └── audio_http.py          # wav_response y uploaded_file (ya resueltas)
+│   │   ├── audio_http.py          # wav_response y uploaded_file (ya resueltas)
+│   │   ├── signals.py             # Endpoints de generación de señales (M1)
+│   │   ├── filters.py             # Endpoints de filtrado por bandas de octava (M2)
+│   │   ├── utils.py               # Endpoints de utilidades: envolvente y curva de Schroeder (M3)
+│   │   └── acoustics.py           # Endpoint de parametros acusticos ISO 3382 por banda (M3)
 │   ├── schemas/
-│   │   └── __init__.py            # Modelos Pydantic de request/response (desde M1)
+│   │   ├── __init__.py            # Modelos Pydantic de request/response (desde M1)
+│   │   ├── signals.py             # Generación de senales (M1)
+│   │   ├── utils.py               # Endpoints de utilidades (M3)
+│   │   └── responses.py           # Respuestas del analisis acustico (M3)
 │   └── services/
 │       ├── __init__.py
 │       ├── pink_noise.py          # generate_pink_noise (M1)
@@ -86,13 +93,32 @@ rir-api/
 │   ├── test_generacion.py         # Tests de M1
 │   ├── test_procesamiento.py      # Tests de M2
 │   ├── test_analisis.py           # Tests de M3 (services)
-│   └── test_api.py                # Tests de endpoints, por milestone (M0 a M3)
+│   ├── test_api.py                # Tests de endpoints, por milestone (M0 a M3)
+│   ├── test_api_errores.py        # Tests de endpoints de M3
+│   └── test_parametros_bordes.py  # Tests de M3 para calculate_parameters_from_ir
 ├── data/                          # Mediciones y audios locales (ignorado por git)
 ├── docs/
+│   ├── m1/                        # Gráficos de validación de M1
+│   │   ├── convolucion_sweep_filtro_inverso.png
+│   │   ├── espectro_ruido_rosa.png
+│   │   ├── espectrograma_sine_sweep.png
+│   │   ├── prueba_real_play_and_record.png
+│   ├── m2/                        # Gráficos de validación de M2
+│   │   ├── README.md              # Resumen de la validación experimental
+│   │   ├── decaimiento_bandas_octava.png
+│   │   ├── ida_y_vuelta_sintetica_correlacion.png
+│   │   ├── rir_corta_analisis.png
+│   │   ├── rir_larga_analisis.png
 │   └── README.md                  # Guia para la documentacion (graficas de validacion, etc.)
 ├── .github/workflows/ci.yml       # CI: ruff + pytest en cada push/PR
 ├── .gitignore
 ├── pyproject.toml                 # Dependencias y configuracion (ruff, pytest)
+├── uv.lock                        # Gestión de dependencia utilizadas en el proyecto
+├── AI_LOG.md                      # Registro del uso de IA
+├── generar_graficas.py
+├── generar_evidencias_m2.py
+├── prueba_play_and_record.py
+├── graficar_prueba_real.py
 └── README.md
 ```
 
