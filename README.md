@@ -102,13 +102,21 @@ rir-api/
 │   │   ├── convolucion_sweep_filtro_inverso.png
 │   │   ├── espectro_ruido_rosa.png
 │   │   ├── espectrograma_sine_sweep.png
-│   │   ├── prueba_real_play_and_record.png
+│   │   └── prueba_real_play_and_record.png
 │   ├── m2/                        # Gráficos de validación de M2
 │   │   ├── README.md              # Resumen de la validación experimental
 │   │   ├── decaimiento_bandas_octava.png
 │   │   ├── ida_y_vuelta_sintetica_correlacion.png
 │   │   ├── rir_corta_analisis.png
-│   │   ├── rir_larga_analisis.png
+│   │   └── rir_larga_analisis.png
+│   ├── m3/                        # Gráficos de validación de M3
+│   │   ├── filtros_octava.png
+│   │   ├── schroeder_regresiones.png
+│   │   ├── validacion_rew.png
+│   │   ├── ri_real.wav
+│   │   ├── ri_sintetica.wav
+│   │   ├── rew.csv
+│   │   └── tabla_validacion.md
 │   └── README.md                  # Guia para la documentacion (graficas de validacion, etc.)
 ├── .github/workflows/ci.yml       # CI: ruff + pytest en cada push/PR
 ├── .gitignore
@@ -119,6 +127,7 @@ rir-api/
 ├── generar_evidencias_m2.py
 ├── prueba_play_and_record.py
 ├── graficar_prueba_real.py
+├── generar_graficas_m3.py
 └── README.md
 ```
 
@@ -364,7 +373,37 @@ Las imágenes de validación se encuentran almacenadas en la carpeta `docs/m1/`:
 
 * **Síntesis y Deconvolución de RIR:** Obtención de la respuesta al impulso sintética y real mediante deconvolución por FFT (`scipy.signal.fftconvolve`) entre la grabación en recinto y el filtro inverso del sweep, recortando desde el pico de máxima amplitud y normalizando al pico unitario.
 
+### Milestone 3: Parámetros Acústicos (ISO 3382-1) y Validación contra REW
+
+#### Origen de las Respuestas al Impulso (RI)
+* **RI Sintética:** Generada con tiempos de reverberación conocidos ($T_{60}$ objetivo por banda: 125 Hz: 1.8 s · 250 Hz: 1.6 s · 500 Hz: 1.4 s · 1 kHz: 1.2 s · 2 kHz: 1.0 s · 4 kHz: 0.8 s).
+* **RI Real:** Medición real en recinto acústico (Gimnasio, archivo `h026_Gym_8txts.wav`) obtenida del *MIT Acoustic Impulse Response Survey*.
+
+#### 1. Curva de Integración Inversa de Schroeder y Regresiones
+![Schroeder y Regresiones](docs/m3/schroeder_regresiones.png)
+* **Análisis:** Muestra la curva de decaimiento acumulado de Schroeder junto con los ajustes por mínimos cuadrados para el cálculo de $EDT$ (-0 a -10 dB), $T_{20}$ (-5 a -25 dB) y $T_{30}$ (-5 a -35 dB), garantizando la extrapolación a 60 dB según la norma ISO 3382-1.
+
+#### 2. Respuesta en Frecuencia del Banco de Filtros de Octava
+![Filtros por Octava](docs/m3/filtros_octava.png)
+* **Análisis:** Muestra la respuesta en frecuencia del banco de filtros por octava (Butterworth de orden 4 implementado con `sosfiltfilt`, con frecuencias de corte en $f_c / \sqrt{2}$ y $f_c \cdot \sqrt{2}$ para 125 Hz a 4 kHz).
+
+#### 3. Validación de $T_{30}$ contra REW (Room EQ Wizard)
+![Validación contra REW](docs/m3/validacion_rew.png)
+* **Análisis:** Comparación directa de $T_{30}$ entre los cálculos de la API y las mediciones de REW con la franja de tolerancia aceptada del $\pm 10\%$.
+
+#### Tabla de Validación Integrada
+
+*(Reemplazar este bloque con el contenido exacto recién generado en `docs/m3/tabla_validacion.md`)*
+
+#### Análisis de Resultados y Comparación con REW
+
+* **T20 y T30:** Coinciden con REW en todas las bandas de la RI sintética (diferencia de 0,02 s como máximo) y en 5 de 6 bandas de la RI real. La excepción es la banda de 125 Hz en la RI real ($T_{30} = 0,89\text{ s}$ vs. $1,04\text{ s}$ en REW): en bajas frecuencias la banda es angosta y la estimación depende marcadamente de la respuesta del filtro de octava y del criterio de corte del ruido de fondo, el cual REW calcula con un algoritmo distinto.
+* **EDT:** Coincide muy bien en la RI sintética, pero en la RI real nuestra estimación resulta menor entre 500 Hz y 4 kHz (con una diferencia de hasta 0,42 s en 2 kHz). El $EDT$ utiliza el tramo de 0 a -10 dB que incluye el sonido directo (con el micrófono situado a 1,5 m): la recta de regresión ajusta con un coeficiente $R^2 \approx 0,80$ (a diferencia del $R^2 \ge 0,99$ en $T_{20}$ y $T_{30}$), por lo que pequeñas discrepancias en la localización exacta del tiempo cero ($t_0$) modifican sustancialmente la pendiente.
+* **C80:** Tras corregir el formato decimal en la entrada de REW, los valores de $C_{80}$ presentan un sesgo sistemático en la RI real donde nuestra API obtiene entre 1,1 dB y 1,7 dB menos que REW en casi todas las bandas. Un sesgo constante de este tipo indica una diferencia de criterio en la ventana de integración: nosotros contabilizamos los 80 ms a partir del pico máximo de cada banda filtrada; si REW sitúa la ventana desde el inicio temporal global de la señal, la energía integrada difiere ligeramente.
+
 ---
+* **Diagrama de Arquitectura:** El flujo de procesamiento se encuentra integrado y referenciado en la sección de [Arquitectura del Sistema](#arquitectura).
+* **Evidencia Milestone 2:** El informe de validación previo se encuentra documentado en [docs/m2/README.md](docs/m2/README.md).
 
 ### Pruebas de Endpoints HTTP (Ejemplos `curl`)
 
@@ -391,6 +430,7 @@ curl -X POST "http://localhost:8000/api/v1/signals/sine-sweep" \
      -d '{"duration": 5.0, "start_freq": 20.0, "end_freq": 20000.0, "inverse": true}' \
      --output filtro_inverso.wav
 ```
+
 #### Filtrado por bandas de octavas (`POST /api/v1/filters/single-band`)
 Filtra una respuesta al impulso en la banda de octava centrada en 1000 Hz y guarda el resultado como WAV.
 ```bash
