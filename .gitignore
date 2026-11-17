@@ -72,7 +72,7 @@ coverage.xml
 *.mp3
 # ...salvo los WAV chicos de prueba para los tests
 !tests/data/*.wav
-
+!docs/m3/*.wav
 # Datos de medicion (se versiona solo la carpeta vacia)
 /data/*
 !/data/.gitkeep
