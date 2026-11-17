@@ -391,6 +391,23 @@ curl -X POST "http://localhost:8000/api/v1/signals/sine-sweep" \
      -d '{"duration": 5.0, "start_freq": 20.0, "end_freq": 20000.0, "inverse": true}' \
      --output filtro_inverso.wav
 ```
+#### Filtrado por bandas de octavas (`POST /api/v1/filters/single-band`)
+Filtra una respuesta al impulso en la banda de octava centrada en 1000 Hz y guarda el resultado como WAV.
+```bash
+curl -X POST http://localhost:8000/api/v1/filters/single-band \
+     -F "file=@ri.wav" \
+     -F "center_freq=1000" \
+     --output banda_1k.wav
+```
+
+#### Sintetizar respuesta al impulso (`POST /api/v1/signals/synthetic-ir`)
+Genera una respuesta al impulso sintética con los tiempos de reverberación especificados y guarda el resultado como un archivo WAV.
+```bash
+curl -X POST http://localhost:8000/api/v1/signals/synthetic-ir \
+     -H "Content-Type: application/json" \
+     -d '{"duration": 2, "t60_values": {"500": 1.2, "1000": 1.0}}' \
+     --output ri_sintetica.wav
+```
 
 #### Generar una RI sintética para probar los endpoints de M3 (`POST /api/v1/signals/synthetic-ir`)
 ```bash
