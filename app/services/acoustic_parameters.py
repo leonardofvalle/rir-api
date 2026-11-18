@@ -117,7 +117,7 @@ def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
        time." JASA 37(3), 409-412.
     """
 
-    # Calculo de la integral de Schroeder
+    # Calculo de la integral inversa de Schroeder
     schroeder = np.cumsum(ir[::-1] ** 2)[::-1]
 
     # Evitar logaritmo de cero

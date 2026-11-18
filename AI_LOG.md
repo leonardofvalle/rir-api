@@ -212,7 +212,6 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 
 ## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
 
-
 **Contexto:** Issue #15, documentación y evidencia de validación en README.md.
 
 **Qué pregunté:** Cómo redactar los ejemplos de comandos curl para los endpoints de M1 (pink-noise y sine-sweep) y cómo estructurar la sección de validación incluyendo las 3 imágenes de evidencia en el README.md.
@@ -238,7 +237,6 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 **Verificación:** Ejecución exitosa de los tests unitarios (test_synthetic_ir_duration y test_synthetic_ir_decay) en tests/test_procesamiento.py. Commit pusheado en la rama de trabajo.
 
 ---
-
 
 ## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
 

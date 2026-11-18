@@ -51,7 +51,7 @@ def generate_pink_noise(duration: float, fs: int) -> np.ndarray:
     # Frecuencias correspondientes
     freqs = np.fft.rfftfreq(n, d=1 / fs)
 
-    # Se genera un array de ceros del tamaño que el espectro de ruido blanco
+    # Se genera un array de ceros del mismo tamaño que el espectro de ruido blanco
     z = np.zeros_like(fft)
 
     # Se aplica el filtro 1/sqrt(f) en todas las posiciones dejando en cero la primera

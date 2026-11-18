@@ -67,9 +67,16 @@ rir-api/
 │   ├── routers/
 │   │   ├── __init__.py
 │   │   ├── health.py              # GET /health (M0)
-│   │   └── audio_http.py          # wav_response y uploaded_file (ya resueltas)
+│   │   ├── audio_http.py          # wav_response y uploaded_file (ya resueltas)
+│   │   ├── signals.py             # Endpoints de generación de señales (M1)
+│   │   ├── filters.py             # Endpoints de filtrado por bandas de octava (M2)
+│   │   ├── utils.py               # Endpoints de utilidades: envolvente y curva de Schroeder (M3)
+│   │   └── acoustics.py           # Endpoint de parametros acusticos ISO 3382 por banda (M3)
 │   ├── schemas/
-│   │   └── __init__.py            # Modelos Pydantic de request/response (desde M1)
+│   │   ├── __init__.py            # Modelos Pydantic de request/response (desde M1)
+│   │   ├── signals.py             # Generación de senales (M1)
+│   │   ├── utils.py               # Endpoints de utilidades (M3)
+│   │   └── responses.py           # Respuestas del analisis acustico (M3)
 │   └── services/
 │       ├── __init__.py
 │       ├── pink_noise.py          # generate_pink_noise (M1)
@@ -86,13 +93,41 @@ rir-api/
 │   ├── test_generacion.py         # Tests de M1
 │   ├── test_procesamiento.py      # Tests de M2
 │   ├── test_analisis.py           # Tests de M3 (services)
-│   └── test_api.py                # Tests de endpoints, por milestone (M0 a M3)
+│   ├── test_api.py                # Tests de endpoints, por milestone (M0 a M3)
+│   ├── test_api_errores.py        # Tests de endpoints de M3
+│   └── test_parametros_bordes.py  # Tests de M3 para calculate_parameters_from_ir
 ├── data/                          # Mediciones y audios locales (ignorado por git)
 ├── docs/
+│   ├── m1/                        # Gráficos de validación de M1
+│   │   ├── convolucion_sweep_filtro_inverso.png
+│   │   ├── espectro_ruido_rosa.png
+│   │   ├── espectrograma_sine_sweep.png
+│   │   └── prueba_real_play_and_record.png
+│   ├── m2/                        # Gráficos de validación de M2
+│   │   ├── README.md              # Resumen de la validación experimental
+│   │   ├── decaimiento_bandas_octava.png
+│   │   ├── ida_y_vuelta_sintetica_correlacion.png
+│   │   ├── rir_corta_analisis.png
+│   │   └── rir_larga_analisis.png
+│   ├── m3/                        # Gráficos de validación de M3
+│   │   ├── filtros_octava.png
+│   │   ├── schroeder_regresiones.png
+│   │   ├── validacion_rew.png
+│   │   ├── ri_real.wav
+│   │   ├── ri_sintetica.wav
+│   │   ├── rew.csv
+│   │   └── tabla_validacion.md
 │   └── README.md                  # Guia para la documentacion (graficas de validacion, etc.)
 ├── .github/workflows/ci.yml       # CI: ruff + pytest en cada push/PR
 ├── .gitignore
 ├── pyproject.toml                 # Dependencias y configuracion (ruff, pytest)
+├── uv.lock                        # Gestión de dependencia utilizadas en el proyecto
+├── AI_LOG.md                      # Registro del uso de IA
+├── generar_graficas.py
+├── generar_evidencias_m2.py
+├── prueba_play_and_record.py
+├── graficar_prueba_real.py
+├── generar_graficas_m3.py
 └── README.md
 ```
 
@@ -212,7 +247,7 @@ service correspondiente → el resultado vuelve al cliente como WAV o JSON.
 
 ### M1 · Generacion de senales (`v0.1.0`)
 
-- [x] `generate_pink_noise()` en `app/services/pink_noise.py` (Voss-McCartney recomendado).
+- [x] `generate_pink_noise()` en `app/services/pink_noise.py` (Filtrado de ruido blanco con H(f) = 1/√f).
 - [x] `generate_sine_sweep_pair()` (sweep + filtro inverso) en `app/services/sine_sweep.py`.
 - [x] `play_and_record()` en `app/services/audio_io.py`.
 - [x] Endpoints `POST /api/v1/signals/pink-noise` y `POST /api/v1/signals/sine-sweep` (devuelven WAV),
@@ -394,6 +429,24 @@ curl -X POST "http://localhost:8000/api/v1/signals/sine-sweep" \
      -H "Content-Type: application/json" \
      -d '{"duration": 5.0, "start_freq": 20.0, "end_freq": 20000.0, "inverse": true}' \
      --output filtro_inverso.wav
+```
+
+#### Filtrado por bandas de octavas (`POST /api/v1/filters/single-band`)
+Filtra una respuesta al impulso en la banda de octava centrada en 1000 Hz y guarda el resultado como WAV.
+```bash
+curl -X POST http://localhost:8000/api/v1/filters/single-band \
+     -F "file=@ri.wav" \
+     -F "center_freq=1000" \
+     --output banda_1k.wav
+```
+
+#### Sintetizar respuesta al impulso (`POST /api/v1/signals/synthetic-ir`)
+Genera una respuesta al impulso sintética con los tiempos de reverberación especificados y guarda el resultado como un archivo WAV.
+```bash
+curl -X POST http://localhost:8000/api/v1/signals/synthetic-ir \
+     -H "Content-Type: application/json" \
+     -d '{"duration": 2, "t60_values": {"500": 1.2, "1000": 1.0}}' \
+     --output ri_sintetica.wav
 ```
 
 #### Generar una RI sintética para probar los endpoints de M3 (`POST /api/v1/signals/synthetic-ir`)
