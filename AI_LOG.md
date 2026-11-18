@@ -277,6 +277,34 @@ Nyquist, archivo inválido), que responden 422.
 
 ---
 
+## 2026-11-15 · Leonardo Valle · Claude (claude.ai)
+
+**Contexto:** Issues #13 y #14 (M3): `calculate_parameters_from_ir` y los endpoints
+`/acoustics/parameters`, `/utils/schroeder` y `/utils/smoothing`.
+
+**Qué pregunté:** Cómo implementar los schemas y routers de M3 contra los stubs (antes de
+que estuvieran los servicios de Matías), cómo calcular EDT, T10, T20, T30, D50 y C80 por
+banda, y qué tests de error agregar.
+
+**Qué obtuve:** Los schemas `responses.py` y `utils.py`, los routers `acoustics.py` y
+`utils.py`, la función `calculate_parameters_from_ir` y los tests `test_api_errores.py`
+y `test_parametros_bordes.py`.
+
+**Qué aprendí:** Que la integral de Schroeder suma el ruido de la cola y levanta la curva:
+hay que cortar la banda donde el decaimiento llega al ruido y devolver `None` si no hay
+rango dinámico (ISO 3382). Que la RI recortada en el pico necesita unos ms de ceros antes
+de filtrar con `sosfiltfilt`. Que JSON no admite `-inf` (piso de −150 dB) y que conviene
+decimar las curvas antes de mandarlas.
+
+**Error / limitación:** La primera versión daba T20 de 10 s para una RI de 1,2 s con ruido
+a −30 dB; se corrigió midiendo el ruido con una envolvente de 10 ms y truncando antes de
+Schroeder. `apply_lundeby` (opcional) no se implementó.
+
+**Verificación:** Con RI sintéticas con ruido de −60 a −30 dB, T30 dentro de ±10 % o `None`
+cuando falta rango; 66 tests pasando y 95 % de cobertura.
+
+---
+
 ## 2026-11-16 · Matías Archelli · ChatGPT
 
 **Contexto:** Issue #11 - Implementar `apply_smoothing` y `apply_schroeder_integral`
@@ -318,6 +346,7 @@ Nyquist, archivo inválido), que responden 422.
 **Verificación:** Pasó los tests para la función `linear_regression` de `tests/test_analisis.py` (XPASS)
 
 ---
+
 ## 2026-11-16 · Chelo · Gemini Notebook
 
 **Contexto:** Finalización, refactorización y validación experimental de Milestone 2 (M2).
@@ -332,6 +361,54 @@ Nyquist, archivo inválido), que responden 422.
 
 **Verificación:** Ejecución de `uv run python generar_evidencias_m2.py` completada al 100% (3/3 pasos), generación de la carpeta `docs/m2/` con los 4 gráficos (`.png`) y el `README.md`, y aprobación de las pruebas en Pytest.
 
+---
 
+## 2026-11-16 · Leonardo Valle · Claude (claude.ai)
+
+**Contexto:** Issue #15 (M3): herramientas para la validación y revisión de PRs.
+
+**Qué pregunté:** Cómo generar las gráficas obligatorias de M3 y la tabla contra REW.
+
+**Qué obtuve:** El script `generar_graficas_m3.py` (gráficas de Schroeder con regresiones y
+de filtros, planilla `rew.csv`, gráfica contra REW y tabla de tolerancias) y la opción
+`--ranking` para elegir la RI real entre las 271 del MIT IR Survey.
+
+**Qué aprendí:** Que el EDT de una RI real ajusta peor que T20 y T30 porque el tramo de 0 a
+−10 dB incluye el sonido directo, y por eso la norma arranca los tiempos en −5 dB.
+
+**Error / limitación:** Indiqué que `rew.csv` aceptaba coma decimal, pero en un CSV la coma
+separa columnas y dos valores de C80 quedaron mal cargados; se corrigieron cargándolos con
+punto. En la revisión del PR de M2 se detectó una correlación mal calculada (RI desalineadas)
+y un gráfico que mostraba una sola banda; se corrigieron antes de mergear.
+
+**Verificación:** Los valores de REW los midió Marcelo; los de RIR-API salen del script. T20
+y T30 dentro de tolerancia en 12 de 12 bandas de la RI sintética y 10 de 12 de la real.
+
+---
+
+## 2026-11-17 · Leonardo Valle · Claude (claude.ai)
+
+**Contexto:** Issue #3 (M1): pruebas reales de `play_and_record` según la devolución
+de la cátedra en Slack.
+
+**Qué pregunté:** Cómo organizar la evidencia que pidió el docente: el WAV grabado y un
+gráfico con la señal emitida y la grabada, el espectrograma y la RI, para una prueba
+con auricular y otra con parlante.
+
+**Qué obtuve:** Los scripts `scripts/prueba_play_and_record.py` (recibe la fuente
+como argumento) y `scripts/graficar_prueba_real.py` (gráfico de cuatro paneles).
+
+**Qué aprendí:** A leer un espectrograma de una medición: el parlante del monitor no
+reproduce debajo de unos 150 Hz y el auricular muestra armónicos de distorsión. Que
+una grabación a 0 dBFS satura y la deconvolución da una RI falsa, y que hay que
+dejar margen (−10 dBFS).
+
+**Error / limitación:** La primera grabación con parlante saturó y hubo que bajar
+volumen y ganancia. Windows renumeró los dispositivos de audio entre pruebas y una
+corrida salió por los auriculares: hay que verificar el nombre del dispositivo en
+cada corrida. El micrófono quedó a 20 cm, así que domina el sonido directo.
+
+**Verificación:** Los dos WAV son mono, 48 kHz y 7 s; los gráficos se revisaron a ojo
+(latencia, ausencia de clipping, barrido completo en el espectrograma).
 
 

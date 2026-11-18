@@ -263,7 +263,7 @@ service correspondiente → el resultado vuelve al cliente como WAV o JSON.
 
 ---
 
-## Prueba real de `play_and_record`
+#### Prueba real de `play_and_record`
 
 Dos pruebas con un sine sweep de 5 s (20 Hz a 20 kHz, −6 dBFS) y una grabación de 7 s. Los archivos están en `docs/m1/`: para cada prueba, la grabación (`prueba_<fuente>_grabacion.wav`, mono, 48 kHz), la RI obtenida (`prueba_<fuente>_ri.wav`) y el gráfico (`prueba_<fuente>.png`).
 
@@ -278,7 +278,7 @@ Dos pruebas con un sine sweep de 5 s (20 Hz a 20 kHz, −6 dBFS) y una grabació
 
 Cada gráfico muestra la señal emitida y la grabada en el mismo eje de tiempo, el espectrograma de la grabación y la RI obtenida por deconvolución.
 
-### Prueba 1: auricular
+#### Prueba 1: auricular
 
 Auricular conectado a la salida PHONES de la UMC22 (canal izquierdo), pegado al micrófono. Pico de la grabación: −16,9 dBFS.
 
@@ -286,7 +286,7 @@ Auricular conectado a la salida PHONES de la UMC22 (canal izquierdo), pegado al 
 
 Muestra que la cadena funciona: placa, reproducción y grabación sincronizadas, sin clipping, con unos 0,2 s de latencia entre la señal emitida y la grabada. El auricular casi no reproduce graves (el barrido aparece arriba de unos 80 Hz), se ven armónicos de distorsión como líneas paralelas al barrido y un clic al terminar el sweep. La RI cae al piso de ruido en unos 200 ms: es la respuesta del auricular, no de la sala, porque el auricular no la excita.
 
-### Prueba 2: parlante
+#### Prueba 2: parlante
 
 Parlantes integrados del monitor ASUS VG249QL3A (salida de audio NVIDIA por HDMI), con el micrófono a unos 20 cm, apuntando a los parlantes (en la parte trasera del monitor). Volumen del monitor 30 %, ganancia del micrófono a 1/4. Pico de la grabación: −10 dBFS.
 
