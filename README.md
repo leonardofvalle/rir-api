@@ -247,7 +247,7 @@ service correspondiente → el resultado vuelve al cliente como WAV o JSON.
 
 ### M1 · Generacion de senales (`v0.1.0`)
 
-- [x] `generate_pink_noise()` en `app/services/pink_noise.py` (Voss-McCartney recomendado).
+- [x] `generate_pink_noise()` en `app/services/pink_noise.py` (Filtrado de ruido blanco con H(f) = 1/√f).
 - [x] `generate_sine_sweep_pair()` (sweep + filtro inverso) en `app/services/sine_sweep.py`.
 - [x] `play_and_record()` en `app/services/audio_io.py`.
 - [x] Endpoints `POST /api/v1/signals/pink-noise` y `POST /api/v1/signals/sine-sweep` (devuelven WAV),
