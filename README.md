@@ -263,7 +263,7 @@ service correspondiente → el resultado vuelve al cliente como WAV o JSON.
 
 ---
 
-## Prueba real de `play_and_record`
+#### Prueba real de `play_and_record`
 
 Dos pruebas con un sine sweep de 5 s (20 Hz a 20 kHz, −6 dBFS) y una grabación de 7 s. Los archivos están en `docs/m1/`: para cada prueba, la grabación (`prueba_<fuente>_grabacion.wav`, mono, 48 kHz), la RI obtenida (`prueba_<fuente>_ri.wav`) y el gráfico (`prueba_<fuente>.png`).
 
@@ -278,7 +278,7 @@ Dos pruebas con un sine sweep de 5 s (20 Hz a 20 kHz, −6 dBFS) y una grabació
 
 Cada gráfico muestra la señal emitida y la grabada en el mismo eje de tiempo, el espectrograma de la grabación y la RI obtenida por deconvolución.
 
-### Prueba 1: auricular
+#### Prueba 1: auricular
 
 Auricular conectado a la salida PHONES de la UMC22 (canal izquierdo), pegado al micrófono. Pico de la grabación: −16,9 dBFS.
 
@@ -286,7 +286,7 @@ Auricular conectado a la salida PHONES de la UMC22 (canal izquierdo), pegado al 
 
 Muestra que la cadena funciona: placa, reproducción y grabación sincronizadas, sin clipping, con unos 0,2 s de latencia entre la señal emitida y la grabada. El auricular casi no reproduce graves (el barrido aparece arriba de unos 80 Hz), se ven armónicos de distorsión como líneas paralelas al barrido y un clic al terminar el sweep. La RI cae al piso de ruido en unos 200 ms: es la respuesta del auricular, no de la sala, porque el auricular no la excita.
 
-### Prueba 2: parlante
+#### Prueba 2: parlante
 
 Parlantes integrados del monitor ASUS VG249QL3A (salida de audio NVIDIA por HDMI), con el micrófono a unos 20 cm, apuntando a los parlantes (en la parte trasera del monitor). Volumen del monitor 30 %, ganancia del micrófono a 1/4. Pico de la grabación: −10 dBFS.
 
@@ -311,12 +311,12 @@ uv run python -m scripts.graficar_prueba_real parlante
 
 ### M3 · Producto final (`v1.0.0`)
 
-- [ ] `apply_smoothing()`, `apply_schroeder_integral()`, `linear_regression()` y
+- [x] `apply_smoothing()`, `apply_schroeder_integral()`, `linear_regression()` y
       `calculate_parameters_from_ir()` en `app/services/acoustic_parameters.py`.
-- [ ] Endpoints `POST /api/v1/acoustics/parameters`, `POST /api/v1/utils/schroeder` y
+- [x] Endpoints `POST /api/v1/acoustics/parameters`, `POST /api/v1/utils/schroeder` y
       `POST /api/v1/utils/smoothing`: la API completa.
-- [ ] Tests de `tests/test_analisis.py` y todos los de `tests/test_api.py` pasando.
-- [ ] Seccion "Validacion" en este README, `AI_LOG.md` y presentacion oral.
+- [x] Tests de `tests/test_analisis.py` y todos los de `tests/test_api.py` pasando.
+- [x] Seccion "Validacion" en este README, `AI_LOG.md` y presentacion oral.
 - [ ] (Opcional) `apply_lundeby()`.
 
 ## Tests
@@ -363,10 +363,6 @@ o con un archivo `.env` en la raiz (ignorado por git).
 
 ## Validación y Evidencia Gráfica
 
-## Milestone 2 
-
-La validación de M2 está en [docs/m2/README.md](docs/m2/README.md).
-
 
 ### Milestone 1: Generación de Señales 
 
@@ -387,7 +383,7 @@ Las imágenes de validación se encuentran almacenadas en la carpeta `docs/m1/`:
 
 ###  Milestone 2: Procesamiento de la Respuesta al Impulso
 
-* **Síntesis y Deconvolución de RIR:** Obtención de la respuesta al impulso sintética y real mediante deconvolución por FFT (`scipy.signal.fftconvolve`) entre la grabación en recinto y el filtro inverso del sweep, recortando desde el pico de máxima amplitud y normalizando al pico unitario.
+* **Síntesis y Deconvolución de RIR:** Obtención de la respuesta al impulso sintética y real mediante deconvolución por FFT (`scipy.signal.fftconvolve`) entre la grabación en recinto y el filtro inverso del sweep, recortando desde el pico de máxima amplitud y normalizando al pico unitario. La validación completa de M2 está en [docs/m2/README.md](docs/m2/README.md).
 
 ### Milestone 3: Parámetros Acústicos (ISO 3382-1) y Validación contra REW
 
