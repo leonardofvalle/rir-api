@@ -102,7 +102,12 @@ rir-api/
 │   │   ├── convolucion_sweep_filtro_inverso.png
 │   │   ├── espectro_ruido_rosa.png
 │   │   ├── espectrograma_sine_sweep.png
-│   │   └── prueba_real_play_and_record.png
+│   │   ├── prueba_auricular.png
+│   │   ├── prueba_auricular_grabacion.wav
+│   │   ├── prueba_auricular_ri.wav
+│   │   ├── prueba_parlante.png
+│   │   ├── prueba_parlante_grabacion.wav
+│   │   └── prueba_parlante_ri.wav
 │   ├── m2/                        # Gráficos de validación de M2
 │   │   ├── README.md              # Resumen de la validación experimental
 │   │   ├── decaimiento_bandas_octava.png
@@ -125,8 +130,9 @@ rir-api/
 ├── AI_LOG.md                      # Registro del uso de IA
 ├── generar_graficas.py
 ├── generar_evidencias_m2.py
-├── prueba_play_and_record.py
-├── graficar_prueba_real.py
+├── scripts/
+│   ├── prueba_play_and_record.py  # Prueba real de play_and_record (M1)
+│   └── graficar_prueba_real.py    # Grafico de cada prueba (M1)
 ├── generar_graficas_m3.py
 └── README.md
 ```
@@ -259,31 +265,41 @@ service correspondiente → el resultado vuelve al cliente como WAV o JSON.
 
 ## Prueba real de `play_and_record`
 
-Prueba de funcionamiento con `prueba_play_and_record.py` (sweep de 5 s, grabacion de 7 s):
+Dos pruebas con un sine sweep de 5 s (20 Hz a 20 kHz, −6 dBFS) y una grabación de 7 s. Los archivos están en `docs/m1/`: para cada prueba, la grabación (`prueba_<fuente>_grabacion.wav`, mono, 48 kHz), la RI obtenida (`prueba_<fuente>_ri.wav`) y el gráfico (`prueba_<fuente>.png`).
 
-| Parametro | Valor |
+| Parámetro | Valor |
 |---|---|
-| Interfaz | Behringer UMC22 (USB Audio CODEC), entrada 1 y salida 13 |
+| Interfaz | Behringer UMC22 (USB Audio CODEC) |
+| Micrófono | Audio-Technica AT2020 (phantom +48 V) |
 | API de audio | MME (Windows) |
-| Fuente | Auricular conectado a la salida PHONES de la UMC22 (canal izquierdo) |
-| Microfono | Audio-Technica AT2020 (phantom +48 V) |
 | Canales | 1 reproducido, 1 grabado (mono) |
 | fs | 48000 Hz |
-| Buffer | automatico (blocksize 0 de sounddevice) |
-| Latencia | 180 ms entrada / 180 ms salida |
-| Pico de la grabacion | -16,9 dBFS |
-![Prueba real de play_and_record](docs/m1/prueba_real_play_and_record.png)
+| Latencia informada | 180 ms entrada / 180 ms salida |
 
-La grabacion tuvo las 336000 muestras esperadas y la respuesta al impulso se obtuvo con
-`get_impulse_response`, que recorta desde el pico y descarta la latencia del sistema.
-Es una prueba de la cadena reproduccion-grabacion: con el auricular pegado al microfono
-domina el sonido directo, asi que no es una medicion de la sala (para eso hace falta un
-parlante y un microfono de medicion omnidireccional).
-Observaciones: los graves llegan atenuados (un auricular sin sellar casi no reproduce
-bajas frecuencias), se registra ruido de fondo del cooler de la PC, y el auricular
-sostenido a mano introduce variaciones en el tiempo (el sistema deja de ser estrictamente
-invariante). Para una medicion real, fuente y microfono van fijos en soportes.
+Cada gráfico muestra la señal emitida y la grabada en el mismo eje de tiempo, el espectrograma de la grabación y la RI obtenida por deconvolución.
 
+### Prueba 1: auricular
+
+Auricular conectado a la salida PHONES de la UMC22 (canal izquierdo), pegado al micrófono. Pico de la grabación: −16,9 dBFS.
+
+![Prueba con auricular](docs/m1/prueba_auricular.png)
+
+Muestra que la cadena funciona: placa, reproducción y grabación sincronizadas, sin clipping, con unos 0,2 s de latencia entre la señal emitida y la grabada. El auricular casi no reproduce graves (el barrido aparece arriba de unos 80 Hz), se ven armónicos de distorsión como líneas paralelas al barrido y un clic al terminar el sweep. La RI cae al piso de ruido en unos 200 ms: es la respuesta del auricular, no de la sala, porque el auricular no la excita.
+
+### Prueba 2: parlante
+
+Parlantes integrados del monitor ASUS VG249QL3A (salida de audio NVIDIA por HDMI), con el micrófono a unos 20 cm, apuntando a los parlantes (en la parte trasera del monitor). Volumen del monitor 30 %, ganancia del micrófono a 1/4. Pico de la grabación: −10 dBFS.
+
+![Prueba con parlante](docs/m1/prueba_parlante.png)
+
+Es la prueba que excita la sala y la que conecta con M2 y M3. El parlante del monitor no reproduce por debajo de unos 150 Hz (el barrido aparece recién ahí) y hay ruido de baja frecuencia (debajo de 60 Hz) durante toda la grabación. La RI cae unos 55 dB en unos 150 ms y después queda en el piso de ruido, cerca de −58 dB. Con el micrófono a 20 cm domina el sonido directo: para medir la sala según ISO 3382 harían falta una fuente omnidireccional, más distancia y fuente y micrófono fijos en soportes.
+
+**Reproducir las pruebas** (desde la raíz del repositorio; los números de dispositivo se configuran al principio del script y cambian según lo que esté conectado, ver `uv run python -m sounddevice`):
+
+```bash
+uv run python -m scripts.prueba_play_and_record parlante
+uv run python -m scripts.graficar_prueba_real parlante
+```
 ### M2 · Procesamiento de la RI (`v0.2.0`)
 
 - [x] `load_audio()`, `generate_synthetic_ir()`, `get_impulse_response()` y

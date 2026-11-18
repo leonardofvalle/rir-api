@@ -8,7 +8,12 @@
 │   │   ├── convolucion_sweep_filtro_inverso.png
 │   │   ├── espectro_ruido_rosa.png
 │   │   ├── espectrograma_sine_sweep.png
-│   │   └── prueba_real_play_and_record.png
+│   │   ├── prueba_auricular.png
+│   │   ├── prueba_auricular_grabacion.wav
+│   │   ├── prueba_auricular_ri.wav
+│   │   ├── prueba_parlante.png
+│   │   ├── prueba_parlante_grabacion.wav
+│   │   └── prueba_parlante_ri.wav
 │   ├── m2/                        # Gráficos de validación de M2
 │   │   ├── README.md              # Resumen de la validación experimental
 │   │   ├── decaimiento_bandas_octava.png
