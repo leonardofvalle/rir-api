@@ -115,7 +115,10 @@ pedí completarla; agregué también la etiqueta del error 422 y la dependencia 
 
 **Verificación:** `uv run pytest -v tests/test\_generacion.py -k "sine\_sweep"\` resultando en 3 tests pasados (XPASS).
 
+---
+
 ## 2026-10-27 · Marcelo · Gemini Notebook 
+
 **Contexto:** Issue #5 - Gráficas de validación de M1 y creación del script `generar_graficas.py`. 
 
 **Qué pregunté:** Asistencia para escribir y depurar el script `generar_graficas.py` que genera las imágenes de validación de M1 (espectro del ruido rosa, espectrograma de sine sweep y la convolución con el filtro inverso). 
@@ -193,6 +196,20 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 
 ---
 
+## 2026-11-04 · Matías Archelli · ChatGPT
+
+**Contexto:** Issue #6 - Implementar `load_audio` y `logarithmic_scale_conversion`
+
+**Qué pregunté:** Qué funciones usar paara saber si el archivo especificado no existe y si el archivo no es un audio valido o el formato no es soportado
+
+**Qué obtuve:** Recomendación de utilizar `path.exists` para comprobar si el archivo existe y `sf.LibsndfileError` si no se puede leer el archivo con `sf.read`.
+
+**Qué aprendí:** Uso de las funciones mencionadas para detectar errores en la lectura de un archivo que se presenta como archivo de audio. 
+
+**Verificación:** Pasó los tests para la funcion `load_audio` de `tests/test_procesamiento.py` (XPASS)
+
+---
+
 ## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
 
 
@@ -235,8 +252,6 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 
 **Verificación:** Tests de deconvolución pasando en tests/test_procesamiento.py. Cambios commiteados y subidos a la rama correspondiente.
 
-
-
 ---
 
 ## 2026-11-04 · Leonardo Valle · Claude (claude.ai)
@@ -264,6 +279,47 @@ Nyquist, archivo inválido), que responden 422.
 
 ---
 
+## 2026-11-16 · Matías Archelli · ChatGPT
+
+**Contexto:** Issue #11 - Implementar `apply_smoothing` y `apply_schroeder_integral`
+
+**Qué pregunté:** Cómo crear el método de moving average para `apply_smoothing`
+
+**Qué obtuve:** Primero se debe convertir los milisegundos en muestras, luego se debe normalizar dividiendo una ventana de unos por la ventana de muestras obtenida para luego realizar el promedio móvil con `np.convolve` y obtener el resultado en escala de amplitud realizando la raiz cuadrada al promedio móvil obtenido.
+
+**Qué aprendí:** Comprender el funcionamiento de método de moving average y su implementación en código de python. 
+
+**Verificación:** Pasó los tests para la función `apply_smoothing` de `tests/test_analisis.py` (XPASS)
+
+---
+
+## 2026-11-16 · Matías Archelli · ChatGPT
+
+**Contexto:** Issue #11 - Implementar `apply_smoothing` y `apply_schroeder_integral`
+
+**Qué pregunté:** Cómo calcular la integral inversa de Schroeder
+
+**Qué obtuve:** Se debe realizar la suma acumulada con `np.cumsum` de la energía, por eso se elevan los valores de la respuesta al impulso al cuadrado. Se debe invertir el array para que en el array resultante se obtenga la energía restante que queda por decaer en cada muestra instante y luego se vuelve a invertir para dejar el array en el orden original. También se recomendó establecer un épsilon con `np.finfo(float).eps` para evitar el logaritmo de 0 a la hora de convertir la escala a dB.
+
+**Qué aprendí:** Comprender cómo calcular la integral inversa de Schroeder. 
+
+**Verificación:** Pasó los tests para la función `apply_schroeder_integral` de `tests/test_analisis.py` (XPASS)
+
+---
+
+## 2026-11-16 · Matías Archelli · ChatGPT
+
+**Contexto:** Issue #12 - Implementar `linear_regression`
+
+**Qué pregunté:** Cómo armar las ecuaciones para la pendiente, la ordenada al origen y el coeficiente de determinación del método de mínimos cuadrados
+
+**Qué obtuve:** Recomendación de armar las ecuaciones de la pendiente y la ordenada al origen por partes para poder visualizar mejor la ecuación y la fórmula de coeficiente de determinación del ajuste por mínimos cuadrados.
+
+**Qué aprendí:** Mejor comprensión de la fórmula de este método de ajuste lineal y en particular del cálculo del coeficiente de determinación del ajuste.
+
+**Verificación:** Pasó los tests para la función `linear_regression` de `tests/test_analisis.py` (XPASS)
+
+---
 ## 2026-11-16 · Chelo · Gemini Notebook
 
 **Contexto:** Finalización, refactorización y validación experimental de Milestone 2 (M2).
