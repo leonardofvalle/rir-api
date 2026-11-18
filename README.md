@@ -295,12 +295,12 @@ invariante). Para una medicion real, fuente y microfono van fijos en soportes.
 
 ### M3 · Producto final (`v1.0.0`)
 
-- [ ] `apply_smoothing()`, `apply_schroeder_integral()`, `linear_regression()` y
+- [x] `apply_smoothing()`, `apply_schroeder_integral()`, `linear_regression()` y
       `calculate_parameters_from_ir()` en `app/services/acoustic_parameters.py`.
-- [ ] Endpoints `POST /api/v1/acoustics/parameters`, `POST /api/v1/utils/schroeder` y
+- [x] Endpoints `POST /api/v1/acoustics/parameters`, `POST /api/v1/utils/schroeder` y
       `POST /api/v1/utils/smoothing`: la API completa.
-- [ ] Tests de `tests/test_analisis.py` y todos los de `tests/test_api.py` pasando.
-- [ ] Seccion "Validacion" en este README, `AI_LOG.md` y presentacion oral.
+- [x] Tests de `tests/test_analisis.py` y todos los de `tests/test_api.py` pasando.
+- [x] Seccion "Validacion" en este README, `AI_LOG.md` y presentacion oral.
 - [ ] (Opcional) `apply_lundeby()`.
 
 ## Tests
@@ -347,10 +347,6 @@ o con un archivo `.env` en la raiz (ignorado por git).
 
 ## Validación y Evidencia Gráfica
 
-## Milestone 2 
-
-La validación de M2 está en [docs/m2/README.md](docs/m2/README.md).
-
 
 ### Milestone 1: Generación de Señales 
 
@@ -371,7 +367,7 @@ Las imágenes de validación se encuentran almacenadas en la carpeta `docs/m1/`:
 
 ###  Milestone 2: Procesamiento de la Respuesta al Impulso
 
-* **Síntesis y Deconvolución de RIR:** Obtención de la respuesta al impulso sintética y real mediante deconvolución por FFT (`scipy.signal.fftconvolve`) entre la grabación en recinto y el filtro inverso del sweep, recortando desde el pico de máxima amplitud y normalizando al pico unitario.
+* **Síntesis y Deconvolución de RIR:** Obtención de la respuesta al impulso sintética y real mediante deconvolución por FFT (`scipy.signal.fftconvolve`) entre la grabación en recinto y el filtro inverso del sweep, recortando desde el pico de máxima amplitud y normalizando al pico unitario. La validación completa de M2 está en [docs/m2/README.md](docs/m2/README.md).
 
 ### Milestone 3: Parámetros Acústicos (ISO 3382-1) y Validación contra REW
 
