@@ -117,7 +117,7 @@ pedí completarla; agregué también la etiqueta del error 422 y la dependencia 
 
 ---
 
-## 2026-10-27 · Marcelo Flore · Gemini Notebook 
+## 2026-10-27 · Marcelo Flores · Gemini Notebook 
 
 **Contexto:** Issue #5 - Gráficas de validación de M1 y creación del script `generar_graficas.py`. 
 
@@ -238,7 +238,7 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 
 ---
 
-## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
+## 2026-11-04 · Marcelo Flores · Gemini (Gemini Notebook)
 
 **Contexto:** Issue #8, implementación de get_impulse_response en app/services/signal_utils.py.
 
@@ -346,6 +346,6 @@ Nyquist, archivo inválido), que responden 422.
 
 **Error / limitación:** Pérdida inicial de los separadores decimales en los $C_{80}$ de 125 Hz y 250 Hz al anotarlos manualmente. Se resolvió re-midiendo y extrayendo todos los $C_{80}$ directamente desde el panel de datos ("Show Data") de REW.
 
-**Verificación:** Generación limpia con `uv run python generar_graficas_m3.py`. Cambios pusheados en la rama
+**Verificación:** Generación limpia con `uv run python generar_graficas_m3.py`. Cambios pusheados en la rama `docs/validacion-m3` e integrados en los PR #52 y #55 (Closes #15).
 
 
