@@ -115,7 +115,7 @@ pedí completarla; agregué también la etiqueta del error 422 y la dependencia 
 
 **Verificación:** `uv run pytest -v tests/test\_generacion.py -k "sine\_sweep"\` resultando en 3 tests pasados (XPASS).
 
-## 2026-10-27 · Marcelo · Gemini Notebook 
+## 2026-10-27 · Marcelo Flores· Gemini Notebook 
 **Contexto:** Issue #5 - Gráficas de validación de M1 y creación del script `generar_graficas.py`. 
 
 **Qué pregunté:** Asistencia para escribir y depurar el script `generar_graficas.py` que genera las imágenes de validación de M1 (espectro del ruido rosa, espectrograma de sine sweep y la convolución con el filtro inverso). 
@@ -193,7 +193,7 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 
 ---
 
-## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
+## 2026-11-04 · Marcelo Flores · Gemini (Gemini Notebook)
 
 
 **Contexto:** Issue #15, documentación y evidencia de validación en README.md.
@@ -208,7 +208,7 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 
 ---
 
-## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
+## 2026-11-04 · Marcelo Flores· Gemini (Gemini Notebook)
 
 **Contexto:** Issue #7, implementación de generate_synthetic_ir en app/services/signal_utils.py.
 
@@ -222,7 +222,7 @@ con duracion negativa). Los tres tests de M1 en `test_api.py` pasan sin la marca
 
 ---
 
-## 2026-11-04 · Marcelo · Gemini (Gemini Notebook)
+## 2026-11-04 · Marcelo Flores · Gemini (Gemini Notebook)
 
 **Contexto:** Issue #8, implementación de get_impulse_response en app/services/signal_utils.py.
 
@@ -260,4 +260,20 @@ validación corresponde a M3 y tiene que salir de mediciones reales.
 **Verificación:** Los tres tests de M2 de `test_api.py` y los 14 de `test_procesamiento.py`
 pasan sin marcas xfail; probé también los casos de error (T60 negativo, banda arriba de
 Nyquist, archivo inválido), que responden 422.
+
+---
+
+### 2026-11-16 · Marcelo Flores· Gemini (Gemini Notebook)
+
+**Contexto:** Issue #15, validación experimental de parámetros acústicos de M3 (EDT, T20, T30, C80) mediante REW.
+
+**Qué pregunté:** Cómo configurar REW ("One Octave Bands", orden 6) e importar las RIs sintética y real; cómo consultar los valores exactos tabulados por frecuencia (125 Hz a 4000 Hz) para EDT, T20, T30 y C80 en el panel de datos; cómo formatear `docs/m3/rew.csv` (uso de punto decimal `.`) y redactar la sección de Validación en `README.md` con las explicaciones del EDT, C80, la respuesta en frecuencia de los filtros y el link `#arquitectura`.
+
+**Qué obtuve:** El archivo `docs/m3/rew.csv` corregido con datos exactos de REW; el script y las imágenes de evidencia (`schroeder_regresiones.png`, `filtros_octava.png`, `validacion_rew.png` y `tabla_validacion.md` con 33/48 métricas validadas); y la sección de validación completa para el `README.md`.
+
+**Qué aprendí:** Que los CSV requieren punto decimal (`.`) para evitar errores de lectura en Pandas; que en la RI real el EDT varía por el sonido directo a 1,5 m ($R^2 \approx 0,80$ vs $0,99$ en T20/T30); y que el sesgo de $C_{80}$ (1,1 a 1,7 dB) proviene de la discrepancia en el inicio de la ventana de 80 ms tras el filtrado.
+
+**Error / limitación:** Pérdida inicial de los separadores decimales en los $C_{80}$ de 125 Hz y 250 Hz al anotarlos manualmente. Se resolvió re-midiendo y extrayendo todos los $C_{80}$ directamente desde el panel de datos ("Show Data") de REW.
+
+**Verificación:** Generación limpia con `uv run python generar_graficas_m3.py`. Cambios pusheados en la rama `docs/validacion-m3` e integrados en el PR #52 (`Closes #15`).
 
